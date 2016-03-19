@@ -1,8 +1,8 @@
 <?php
 /**
- * ULMCSVUpload class.
+ * emcsvUpload class.
  */
-class ULMCSVUpload {
+class emcsvUpload {
 
 	public $version='0.1.0';
 	public $csv_headers=array();
@@ -39,20 +39,20 @@ class ULMCSVUpload {
 
 		$html.='<tr>';
 			$html.='<th scope="row">';
-				$html.='<label for="csv_file">'.__('CSV File','ulm').'</label>';
+				$html.='<label for="csv_file">'.__('CSV File','EM').'</label>';
 			$html.='</th>';
 			$html.='<td>';
 				$html.='<input type="text" name="file" id="file" class="regular-text file validate" value="" />';
-				$html.='<input type="button" name="add_csv_file" id="add_csv_file" class="button button-secondary" value="'.__('Add File','ulm').'">';
+				$html.='<input type="button" name="add_csv_file" id="add_csv_file" class="button button-secondary" value="'.__('Add File','EM').'">';
 			$html.='</td>';
 		$html.='</tr>';
 
 		$html.='<tr>';
-			$html.='<th scope="row">'.__('Header Row','ulm').'</th>';
+			$html.='<th scope="row">'.__('Header Row','EM').'</th>';
 			$html.='<td>';
 				$html.='<label for="has_header">';
 					$html.='<input name="has_header" type="checkbox" id="has_header" value="1">';
-					$html.=''.__('First row of csv file is a header row.','ulm');
+					$html.=''.__('First row of csv file is a header row.','EM');
 				$html.='</label>';
 			$html.='</td>';
 		$html.='</tr>';
@@ -108,14 +108,14 @@ class ULMCSVUpload {
 			'default_value' => 0,
 		);
 		$args=array_merge_recursive_distinct($default_args,$args);
-		$args=apply_filters('ulmcsv_map_file_dropdown_args',$args);
+		$args=apply_filters('emcsv_map_file_dropdown_args',$args);
 
 		extract($args);
 
 		$html.='<select name="'.$name.'[]" id="'.$id.'">';
-			$html.='<option value="'.$default_value.'">'.__($default_option,'ulm').'</option>';
+			$html.='<option value="'.$default_value.'">'.__($default_option,'EM').'</option>';
 			foreach ($fields as $value => $option) :
-				$html.='<option value="'.$value.'">'.__($option,'ulm').'</option>';
+				$html.='<option value="'.$value.'">'.__($option,'EM').'</option>';
 			endforeach;
 		$html.'</select>';
 
@@ -196,9 +196,9 @@ class ULMCSVUpload {
 		$html=null;
 
 		$html.='<div class="csv-insert-into-db">';
-			$html.='<div class="title">'.__('Inserting data into database','ulm').'</div>';
+			$html.='<div class="title">'.__('Inserting data into database','EM').'</div>';
 			$html.='<div id="loader-notes"></div>';
-			$html.='<div id="loader-data">'.__('Processing','ulm').' <span class="counter">0</span> '.__('of').' <span class="total">0</span> '.__('rows','ulm').'</div>';
+			$html.='<div id="loader-data">'.__('Processing','EM').' <span class="counter">0</span> '.__('of').' <span class="total">0</span> '.__('rows','EM').'</div>';
 			$html.='<div id="loader-results"></div>';
 		$html.='</div>';
 
@@ -266,15 +266,15 @@ class ULMCSVUpload {
 		// insert post //
 		$post_id=wp_insert_post($post,true);
 
-		do_action('ulmcsv_row_to_db_after_insert_post',$post_id,$post,$row);
+		do_action('emcsv_row_to_db_after_insert_post',$post_id,$post,$row);
 
 		// process our return //
 		if (!$post_id) :
-			$return[]='<div class="error">'.__('Failed to add row to database.','ulm').'</div>';
+			$return[]='<div class="error">'.__('Failed to add row to database.','EM').'</div>';
 		elseif (is_wp_error($post_id)) :
 			$return[]=$post_id->get_error_message();
 		else :
-			$return[]='<div class="updated">'.__('Row added to database. (ID: '.$post_id.')','ulm').'</div>';
+			$return[]='<div class="updated">'.__('Row added to database. (ID: '.$post_id.')','EM').'</div>';
 		endif;
 
 		echo json_encode($return);
@@ -344,68 +344,68 @@ class ULMCSVUpload {
 
 }
 
-$ULMCSVUpload=new ULMCSVUpload();
+$emcsvUpload=new emcsvUpload();
 
-function ulmcsv_file_input_field() {
-	global $ULMCSVUpload;
+function emcsv_file_input_field() {
+	global $emcsvUpload;
 
-	echo $ULMCSVUpload->upload_file_input();
+	echo $emcsvUpload->upload_file_input();
 }
 
-function ulmcsv_map_csv_header_fields($return=false) {
-	global $ULMCSVUpload;
+function emcsv_map_csv_header_fields($return=false) {
+	global $emcsvUpload;
 
 	if ($return)
-		return $ULMCSVUpload->map_csv_header_fields();
+		return $emcsvUpload->map_csv_header_fields();
 
-	echo $ULMCSVUpload->map_csv_header_fields();
+	echo $emcsvUpload->map_csv_header_fields();
 }
 
-function ulmcsv_map_file_dropdown($args=array(),$return=false) {
-	global $ULMCSVUpload;
+function emcsv_map_file_dropdown($args=array(),$return=false) {
+	global $emcsvUpload;
 
 	if ($return)
-		return $ULMCSVUpload->map_file_dropdown($args);
+		return $emcsvUpload->map_file_dropdown($args);
 
-	echo $ULMCSVUpload->map_file_dropdown($args);
+	echo $emcsvUpload->map_file_dropdown($args);
 }
 
-function ulmcsv_get_headers($file_url='',$delimiter=',') {
-	global $ULMCSVUpload;
+function emcsv_get_headers($file_url='',$delimiter=',') {
+	global $emcsvUpload;
 
-	$attachment_id=$ULMCSVUpload->get_attachment_id_from_url($file_url);
+	$attachment_id=$emcsvUpload->get_attachment_id_from_url($file_url);
 	$attachment_path=get_attached_file($attachment_id);
 
-	$ULMCSVUpload->get_csv_header($attachment_path);
+	$emcsvUpload->get_csv_header($attachment_path);
 }
 
-function ulmcsv_get_attachment_id($file_url=false) {
+function emcsv_get_attachment_id($file_url=false) {
 	if (!$file_url)
 		return false;
 
-	global $ULMCSVUpload;
+	global $emcsvUpload;
 
-	return $ULMCSVUpload->get_attachment_id_from_url($file_url);
+	return $emcsvUpload->get_attachment_id_from_url($file_url);
 }
 
-function ulmcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
-	global $ULMCSVUpload;
+function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
+	global $emcsvUpload;
 
-	$ULMCSVUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
+	$emcsvUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
 }
 
-function ulmcsv_map_fields($dropdown_args=array()) {
-	global $ULMCSVUpload;
+function emcsv_map_fields($dropdown_args=array()) {
+	global $emcsvUpload;
 
 	$html=null;
-	$headers=$ULMCSVUpload->get_headers();
+	$headers=$emcsvUpload->get_headers();
 
 	$html.='<tr>';
 		$html.='<th scope="row">';
-			$html.='<label for="header_fields">'.__('Header Fields','ulm').'</label>';
+			$html.='<label for="header_fields">'.__('Header Fields','EM').'</label>';
 		$html.='</th>';
 		$html.='<th scope="row">';
-			$html.='<label for="map_fields">'.__('Map Fields','ulm').'</label>';
+			$html.='<label for="map_fields">'.__('Map Fields','EM').'</label>';
 		$html.='</th>';
 	$html.='</tr>';
 
@@ -413,7 +413,7 @@ function ulmcsv_map_fields($dropdown_args=array()) {
 		$html.='<tr>';
 			$html.='<td>'.$header.'</td>';
 			$html.='<td>';
-				$html.=ulmcsv_map_file_dropdown($dropdown_args,true);
+				$html.=emcsv_map_file_dropdown($dropdown_args,true);
 			$html.='</td>';
 		$html.='</tr>';
 	endforeach;
