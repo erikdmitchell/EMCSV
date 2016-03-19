@@ -33,11 +33,23 @@ function emcsvupload() {
 function emcsv_get_template_slug() {
 	$slug='main'; // default
 
-	if (isset($_POST['emcsvupload']) && wp_verify_nonce($_POST['emcsvupload'], 'emcsv_add_file')) :
+	if (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
 		$slug='mapfields'; // after we add our file
 	endif;
 
 
 	return $slug;
+}
+
+function emcsv_referer_page($echo=true) {
+	$page='';
+
+	if (isset($_GET['page']))
+		$page=$_GET['page'];
+
+	if ($echo)
+		echo $page;
+
+	return $page;
 }
 ?>
