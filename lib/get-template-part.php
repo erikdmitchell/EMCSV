@@ -1,5 +1,5 @@
 <?php
-$plugin_template_folder='templates/';
+$emscvupload_template_folder='adminpages/';
 
 /**
  * Retrieves a template part
@@ -9,29 +9,26 @@ $plugin_template_folder='templates/';
  * @param string $slug
  * @param string $name Optional. Default null
  *
- * @uses  plugin_locate_template()
+ * @uses  emscvupload_locate_template()
  * @uses  load_template()
  * @uses  get_template_part()
  */
+function emscvupload_get_template_part( $slug, $name = null, $atts=array(), $load = true ) {
+	// Execute code for this part
+	do_action( 'get_template_part_' . $slug, $slug, $name );
 
-if (!function_exists('plugin_get_template_part')) :
-	function plugin_get_template_part( $slug, $name = null, $atts=array(), $load = true ) {
-		// Execute code for this part
-		do_action( 'get_template_part_' . $slug, $slug, $name );
+	// Setup possible parts
+	$templates = array();
+	if ( isset( $name ) )
+		$templates[] = $slug . '-' . $name . '.php';
+	$templates[] = $slug . '.php';
 
-		// Setup possible parts
-		$templates = array();
-		if ( isset( $name ) )
-			$templates[] = $slug . '-' . $name . '.php';
-		$templates[] = $slug . '.php';
+	// Allow template parts to be filtered
+	$templates = apply_filters( 'emscvupload_get_template_part', $templates, $slug, $name );
 
-		// Allow template parts to be filtered
-		$templates = apply_filters( 'plugin_get_template_part', $templates, $slug, $name );
-
-		// Return the part that is found
-		return plugin_locate_template( $templates, $load, false, $atts );
-	}
-endif;
+	// Return the part that is found
+	return emscvupload_locate_template( $templates, $load, false, $atts );
+}
 /**
  * Retrieve the name of the highest priority template file that exists.
  *
@@ -47,46 +44,44 @@ endif;
  *                            Has no effect if $load is false.
  * @return string The template filename if one is located.
  */
-if (!function_exists('plugin_locate_template')) :
-	function plugin_locate_template( $template_names, $load = false, $require_once = true, $atts=array() ) {
-		global $plugin_template_folder;
+function emscvupload_locate_template( $template_names, $load = false, $require_once = true, $atts=array() ) {
+	global $emscvupload_template_folder;
 
-		// No file found yet
-		$located = false;
+	// No file found yet
+	$located = false;
 
-		// Try to find a template file
-		foreach ( (array) $template_names as $template_name ) {
+	// Try to find a template file
+	foreach ( (array) $template_names as $template_name ) {
 
-			// Continue if template is empty
-			if ( empty( $template_name ) )
-				continue;
+		// Continue if template is empty
+		if ( empty( $template_name ) )
+			continue;
 
-			// Trim off any slashes from the template name
-			$template_name = ltrim( $template_name, '/' );
+		// Trim off any slashes from the template name
+		$template_name = ltrim( $template_name, '/' );
 
-			// Check child theme first
-			if ( file_exists( trailingslashit( get_stylesheet_directory() ) . $plugin_template_folder . $template_name ) ) {
-				$located = trailingslashit( get_stylesheet_directory() ) . $plugin_template_folder . $template_name;
-				break;
+		// Check child theme first
+		if ( file_exists( trailingslashit( get_stylesheet_directory() ) . $emscvupload_template_folder . $template_name ) ) {
+			$located = trailingslashit( get_stylesheet_directory() ) . $emscvupload_template_folder . $template_name;
+			break;
 
-			// Check parent theme next
-			} elseif ( file_exists( trailingslashit( get_template_directory() ) . $plugin_template_folder . $template_name ) ) {
-				$located = trailingslashit( get_template_directory() ) . $plugin_template_folder . $template_name;
-				break;
+		// Check parent theme next
+		} elseif ( file_exists( trailingslashit( get_template_directory() ) . $emscvupload_template_folder . $template_name ) ) {
+			$located = trailingslashit( get_template_directory() ) . $emscvupload_template_folder . $template_name;
+			break;
 
-			// Check theme compatibility last
-			} elseif ( file_exists( trailingslashit( plugin_get_templates_dir() ) . $template_name ) ) {
-				$located = trailingslashit( plugin_get_templates_dir() ) . $template_name;
-				break;
-			}
+		// Check theme compatibility last
+		} elseif ( file_exists( trailingslashit( emscvupload_get_templates_dir() ) . $template_name ) ) {
+			$located = trailingslashit( emscvupload_get_templates_dir() ) . $template_name;
+			break;
 		}
-
-		if ( ( true == $load ) && ! empty( $located ) )
-			plugin_load_template( $located, $require_once, $atts );
-
-		return $located;
 	}
-endif;
+
+	if ( ( true == $load ) && ! empty( $located ) )
+		emscvupload_load_template( $located, $require_once, $atts );
+
+	return $located;
+}
 
 /**
  * Require the template file with WordPress environment.
@@ -113,8 +108,7 @@ endif;
  * @param string $_template_file Path to template file.
  * @param bool   $include_once   Whether to include_once or include. Default true.
  */
-if (!function_exists('plugin_load_template')) :
-	function plugin_load_template( $_template_file, $include_once = true, $atts=array() ) {
+function emscvupload_load_template( $_template_file, $include_once = true, $atts=array() ) {
     global $posts, $post, $wp_did_header, $wp_query, $wp_rewrite, $wpdb, $wp_version, $wp, $id, $comment, $user_ID;
 
     if ( is_array( $wp_query->query_vars ) ) {
@@ -130,20 +124,17 @@ if (!function_exists('plugin_load_template')) :
     } else {
             include( $_template_file );
     }
-	}
-endif;
+}
 
 /**
- * plugin_get_templates_dir function.
+ * emscvupload_get_templates_dir function.
  *
  * @access public
  * @return void
  */
-if (!function_exists('plugin_get_templates_dir')) :
-	function plugin_get_templates_dir() {
-		global $plugin_template_folder;
+function emscvupload_get_templates_dir() {
+	global $emscvupload_template_folder;
 
-		return plugin_dir_path(dirname(__FILE__)).$plugin_template_folder;
-	}
-endif;
+	return plugin_dir_path(dirname(__FILE__)).$emscvupload_template_folder;
+}
 ?>
