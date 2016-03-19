@@ -32,7 +32,7 @@
 			</tbody>
 		</table>
 		<p class="submit">
-			<input type="button" name="add-file" id="add-file" class="button button-primary" value="<?php _e('Process File','emcsvupload'); ?>">
+			<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Process File','emcsvupload'); ?>">
 		</p>
 	</form>
 </div>

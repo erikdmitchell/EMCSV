@@ -21,9 +21,23 @@ rework pages like ultimate csv (see dropbox for visiuals)
 */
 
 function emcsvupload() {
+	$slug=emcsv_get_template_slug();
+
 	echo '<div class="wrap">';
 		echo '<h1>CSV Uploader</h1>';
-		emscvupload_get_template_part('main');
+
+		emscvupload_get_template_part($slug);
 	echo '</div>';
+}
+
+function emcsv_get_template_slug() {
+	$slug='main'; // default
+
+	if (isset($_POST['emcsvupload']) && wp_verify_nonce($_POST['emcsvupload'], 'emcsv_add_file')) :
+		$slug='mapfields'; // after we add our file
+	endif;
+
+
+	return $slug;
 }
 ?>
