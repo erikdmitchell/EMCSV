@@ -10,5 +10,11 @@ require_once(EMCSVUPLOAD_PATH.'functions.php');
 hook our admin pages up
 the idea is to have a function/shortcode we can drop in that will basically run itself
 it would have our admin pages and then it could run within the admin section on its own
+
+-------
+TWEAK get-template-part.php
+include admin pages
+test running of admin pages as is
+rework pages like ultimate csv (see dropbox for visiuals)
 */
 ?>
