@@ -1,57 +1,57 @@
 <?php
 function emcsv_file_input_field() {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
-	echo $emcsvUpload->upload_file_input();
+	echo $EMCSVUpload->upload_file_input();
 }
 
 function emcsv_map_csv_header_fields($return=false) {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
 	if ($return)
-		return $emcsvUpload->map_csv_header_fields();
+		return $EMCSVUpload->map_csv_header_fields();
 
-	echo $emcsvUpload->map_csv_header_fields();
+	echo $EMCSVUpload->map_csv_header_fields();
 }
 
 function emcsv_map_file_dropdown($args=array(),$return=false) {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
 	if ($return)
-		return $emcsvUpload->map_file_dropdown($args);
+		return $EMCSVUpload->map_file_dropdown($args);
 
-	echo $emcsvUpload->map_file_dropdown($args);
+	echo $EMCSVUpload->map_file_dropdown($args);
 }
 
 function emcsv_get_headers($file_url='',$delimiter=',') {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
-	$attachment_id=$emcsvUpload->get_attachment_id_from_url($file_url);
+	$attachment_id=$EMCSVUpload->get_attachment_id_from_url($file_url);
 	$attachment_path=get_attached_file($attachment_id);
 
-	$emcsvUpload->get_csv_header($attachment_path);
+	$EMCSVUpload->get_csv_header($attachment_path);
 }
 
 function emcsv_get_attachment_id($file_url=false) {
 	if (!$file_url)
 		return false;
 
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
-	return $emcsvUpload->get_attachment_id_from_url($file_url);
+	return $EMCSVUpload->get_attachment_id_from_url($file_url);
 }
 
 function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
-	$emcsvUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
+	$EMCSVUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
 }
 
 function emcsv_map_fields($dropdown_args=array()) {
-	global $emcsvUpload;
+	global $EMCSVUpload;
 
 	$html=null;
-	$headers=$emcsvUpload->get_headers();
+	$headers=$EMCSVUpload->get_headers();
 
 	$html.='<tr>';
 		$html.='<th scope="row">';

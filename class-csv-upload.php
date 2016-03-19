@@ -1,8 +1,8 @@
 <?php
 /**
- * emcsvUpload class.
+ * EMCSVUpload class.
  */
-class emcsvUpload {
+class EMCSVUpload {
 
 	public $version='0.1.0';
 	public $csv_headers=array();
@@ -344,5 +344,5 @@ class emcsvUpload {
 
 }
 
-$emcsvUpload=new emcsvUpload();
+$EMCSVUpload=new EMCSVUpload();
 ?>
