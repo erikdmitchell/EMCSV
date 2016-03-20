@@ -21,6 +21,7 @@ $column_counter=0;
 		<div class="csv-header-map-name map-row">
 			<label for="map_name"><?php _e('Map Name', 'emcsvupload'); ?></label>
 			<?php echo emcsv_get_csv_maps_dropdown(); ?>
+			<a href="<?php echo emcsv_add_preset_map_url(); ?>">Add Preset Map</a>
 		</div>
 
 		<div class="emcsv-post-type map-row">

@@ -35,12 +35,21 @@ function emcsv_get_template_slug() {
 
 	if (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
 		$slug='mapfields'; // after we add our file
+	elseif (isset($_GET['emcsv_preset_map']) && wp_verify_nonce($_GET['emcsv_preset_map'], 'emcsv-goto-preset-map')) :
+		$slug='maps'; // our add/edit custom maps screen
 	endif;
 
 
 	return $slug;
 }
 
+/**
+ * emcsv_referer_page function.
+ *
+ * @access public
+ * @param bool $echo (default: true)
+ * @return void
+ */
 function emcsv_referer_page($echo=true) {
 	$page='';
 

@@ -37,7 +37,14 @@ function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='pos
 }
 */
 
-function emcsv_get_csv_maps_dropdown($echo=true) {
+/**
+ * emcsv_get_csv_maps_dropdown function.
+ *
+ * @access public
+ * @param bool $echo (default: false)
+ * @return void
+ */
+function emcsv_get_csv_maps_dropdown($echo=false) {
 	$html=null;
 	$option=get_option('emcsv_csv_maps', array());
 
@@ -225,7 +232,17 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
  * @access public
  * @return void
  */
-function emcsv_get_fields() {
+function emcsv_get_fields($raw=false) {
+	if ($raw) :
+		$wp_fields=emcsv_get_wordpress_fields();
+		$meta_fields=emcsv_get_meta_keys(true);
+		$taxonomies=emcsv_get_all_taxonomies();
+
+		$fields=$wp_fields+$meta_fields+$taxonomies;
+
+		return $fields;
+	endif;
+
 	$fields=array(
 		'wp_fields' => array(
 			'name' =>	'WordPress Fields',
@@ -421,5 +438,49 @@ function emcsv_get_post_status_dropdown($echo=false) {
 		echo $html;
 
 	return $html;
+}
+
+function emcsv_add_preset_map_url($echo=false) {
+	$screen=get_current_screen();
+	$url=admin_url($screen->parent_file);
+
+	if (isset($_GET['page']))
+		$url.='?page='.$_GET['page'];
+
+	$url=wp_nonce_url($url, 'emcsv-goto-preset-map', 'emcsv_preset_map');
+
+	if ($echo)
+		echo $url;
+
+	return $url;
+}
+
+function emcsv_get_csv_maps_table_rows($echo=true) {
+	$html=null;
+	$options=get_option('emcsv_csv_maps', array());
+
+	if (!$options || empty($options))
+		return false;
+
+	$options=unserialize($options);
+
+	foreach ($options as $option) :
+		$html.='<tr>';
+			$html.='<td>'.$option['id'].'</td>';
+			$html.='<td>'.$option['name'].'</td>';
+			$html.='<td>';
+				$html.='<a href="#">Edit</a> | <a href="#">Delete</a>';
+			$html.='</td>';
+		$html.='</tr>';
+	endforeach;
+
+	if ($echo)
+		echo $html;
+
+	return $html;
+}
+
+function emcsv_custom_map_url($action='') {
+	echo home_url().esc_url( add_query_arg( 'action', $action ) );
 }
 ?>
