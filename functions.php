@@ -228,7 +228,7 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 
 function emcsv_get_fields() {
 	$wp_fields=emcsv_get_wordpress_fields();
-	$custom_fields=emcsv_get_meta_keys();
+	$custom_fields=emcsv_get_meta_keys(true);
 }
 
 /**
@@ -274,14 +274,34 @@ function emcsv_get_custom_fields() {
 	return $wp_fields;
 }
 
-function emcsv_get_meta_keys($type=false, $status=false) {
+function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
     global $wpdb;
 
     $where=array();
+    $wp_default_prefixes=array(
+		'_wp_',
+		'_menu_',
+		'_edit_',
+		'_thumbnail_',
+		'_oembed_',
+	);
 
+    // check if we display "hidden" custom fields (starts with '_') //
+    if (!$show_hidden)
+		$where[]="left(pm.meta_key,1) != '_'";
+
+	// if we hide wp defaults, then we remove a series of basic meta fields that wp uses by default //
+	if (!$wp_defaults) :
+		foreach ($wp_default_prefixes as $prefix) :
+			$where[]="left(pm.meta_key,".strlen($prefix).") != '{$prefix}'";
+		endforeach;
+	endif;
+
+	// show metas from a specific post type //
     if ($type)
     	$where[]="p.post_type = '{$type}'";
 
+	// show mets from a specific post sttus //
     if ($status)
     	$where[]="p.post_status = '{$status}'";
 
@@ -290,14 +310,16 @@ function emcsv_get_meta_keys($type=false, $status=false) {
     else :
 		$where=' WHERE '.implode(' AND ', $where);
     endif;
-echo "SELECT pm.meta_key FROM {$wpdb->postmeta} pm
-        LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-        $where";
-    $results = $wpdb->get_col("
-        SELECT pm.meta_key FROM {$wpdb->postmeta} pm
-        LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+
+	echo $sql="
+		SELECT DISTINCT(pm.meta_key)
+		FROM {$wpdb->postmeta} pm
+        LEFT JOIN {$wpdb->posts} p
+        ON p.ID = pm.post_id
         $where
-    ");
+	";
+
+    $results = $wpdb->get_col($sql);
 
 /*
 _wp_
