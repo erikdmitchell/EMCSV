@@ -1,29 +1,12 @@
-.ulm-map-fields .db-field {
-	overflow: hidden;
+/**
+ * MAP FIELDS
+ */
+.emcsv-map-form th {
+	padding: 10px 10px 10px 5px;
 }
-.ulm-map-fields .db-field select {
-	float: left;
+.emcsv-map-form td {
+	padding: 5px 10px 5px 5px;
 }
-.ulm-map-fields .db-field input {
-	display: none;
-	float: left;
-}
-.ulm-map-fields .db-field input.active {
-	display: block;
-}
-.ulm-map-fields .db-field input[type="checkbox"] {
-	margin-top: 5px;
-	margin-left: 10px;
-}
-.ulm-map-fields #map_name {
-	display: none;
-}
-.ulm-map-fields #map_name.active {
-	display: inline-block;
-}
-.ulm-map-fields .db_fields_dropdown {
-	display: none;
-}
-.ulm-map-fields .db_fields_dropdown.active {
-	display: block;
+.emcsv-map-form tr.fields-row:nth-child(even) {
+	background: #ccc;
 }

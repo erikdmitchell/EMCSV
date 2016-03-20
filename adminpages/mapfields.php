@@ -18,6 +18,9 @@ $column_counter=0;
 		<input type="hidden" name="db_field_names" id="db_field_names" value="">
 		<?php wp_nonce_field('emcsv_map_fields','emcsvupload'); ?>
 
+Select post type (dd)<br>
+Import with post status(dd)<br>
+
 		<div class="csv-header-map-name">
 			<label for="map_name"><?php _e('Name', 'emcsvupload'); ?></label>
 			<?php echo emcsv_get_csv_maps_dropdown(); ?>
@@ -25,13 +28,11 @@ $column_counter=0;
 			<input type="text" name="map_name" id="map_name" class="regular-text active validate" value="" />
 		</div>
 
-		<table class="form-table">
-			<tbody>
-				<?php emcsv_map_fields($_GET['file'], $_GET['has_header']); ?>
-			</tbody>
-		</table>
+		<?php emcsv_map_fields($_GET['file'], $_GET['has_header']); ?>
+
 		<p class="submit">
-			<input type="button" name="button" id="add_to_db_btn" class="button button-primary" value="Add to DB">
+			<input type="button" name="reset" id="reset" class="button button-primary" value="Clear Mapping">
+			<input type="button" name="button" id="add_to_db_btn" class="button button-primary" value="Import">
 		</p>
 	</form>
 </div>

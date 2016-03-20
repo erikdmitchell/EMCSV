@@ -104,42 +104,36 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 	$attachment_id=emcsv_get_attachment_id($file);
 	$attachment_path=get_attached_file($attachment_id);
 	$csv_headers=emcsv_get_csv_header($attachment_path);
-//print_r($csv_headers);
- 	//$html.='<div class="csv-map">';
-		$html.='<tr>';
-			$html.='<th>';
-				$html.=__('WP Fields','emcsvupload');
+	$wp_fields=emcsv_get_fields();
 
-				emcsv_get_fields();
+	$html.='<table class="form-table emcsv-map-form">';
+		$html.='<tbody>';
 
-/*
-wordpress fields
-	post_title [Name: post_title]
-custom fields (option to add and would match _cf)
-	client [Name: client]
-terms/taxonomies fields
-	post_category [Name: post_category]
+			foreach ($wp_fields as $fields_arr) :
+				$html.='<tr>';
+					$html.='<th>';
+						$html.=__($fields_arr['name'], 'emcsvupload');
+					$html.='</th>';
+					$html.='<th>';
+						$html.=__('CSV Header','emcsvupload');
+					$html.='</th>';
+				$html.='</tr>';
 
+				foreach ($fields_arr['fields'] as $field) :
+					$html.='<tr class="fields-row">';
+						$html.='<td class="field">';
+							$html.=$field;
+						$html.='</td>';
+						$html.='<td class="cesv-header">';
+							$html.=emcsv_csv_headers_dropdown('emcsv_headers[]',$attachment_path, ',', false);
+						$html.='</td>';
+					$html.='</tr>';
+				endforeach;
 
-CLEAR NEXT
-*/
-			$html.='</th>';
-			$html.='<th>';
-				$html.=__('CSV Header','emcsvupload');
-			$html.='</th>';
-		$html.='</tr>';
-		foreach ($csv_headers as $header) :
-			$html.='<tr>';
-				$html.='<th scope="row" id="col-'.$column_counter.'">';
-					//$html.='<label for="db_fields[col-'.$column_counter.']">'.$header.'</label>';
-				$html.='</th>';
-				$html.='<td class="csv-header-fields">';
-					$html.=emcsv_csv_headers_dropdown('emcsv_headers[]',$attachment_path, ',', false);
-				$html.='</td>';
-			$html.='</tr>';
-			$column_counter++;
-		endforeach;
-	//$html.='</div>';
+			endforeach;
+
+		$html.='</tbody>';
+	$html.='</table>';
 
 	return $html;
 }
@@ -226,9 +220,29 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	return $header;
 }
 
+/**
+ * emcsv_get_fields function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_get_fields() {
-	$wp_fields=emcsv_get_wordpress_fields();
-	$custom_fields=emcsv_get_meta_keys(true);
+	$fields=array(
+		'wp_fields' => array(
+			'name' =>	'WordPress Fields',
+			'fields' => emcsv_get_wordpress_fields(),
+		),
+		'custom_fields' => array(
+			'name' =>	'Custom Fields',
+			'fields' => emcsv_get_meta_keys(true),
+		),
+		'taxonomies' => array(
+			'name' =>	'Taxonomy Fields',
+			'fields' => emcsv_get_all_taxonomies(),
+		),
+	);
+
+	return $fields;
 }
 
 /**
@@ -255,6 +269,13 @@ function emcsv_get_wordpress_fields() {
 
 	return $wp_fields;
 }
+
+/**
+ * emcsv_get_custom_fields function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_get_custom_fields() {
 	$default_fields=array(
 		'post_title',
@@ -332,5 +353,19 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
     $results = $wpdb->get_col($sql);
 
     return $results;
+}
+
+/**
+ * emcsv_get_all_taxonomies function.
+ *
+ * @access public
+ * @return void
+ */
+function emcsv_get_all_taxonomies() {
+	global $wpdb;
+
+	$taxonomies=$wpdb->get_col("SELECT DISTINCT(taxonomy) FROM {$wpdb->term_taxonomy}");
+
+	return $taxonomies;
 }
 ?>
