@@ -1,4 +1,6 @@
 <?php
+global $emcsv_template_id;
+
 /*
 function emcsv_file_input_field() {
 	global $EMCSVUpload;
@@ -491,6 +493,8 @@ function emcsv_custom_map_url($action='') {
  * @return void
  */
 function emcsv_update_map_template() {
+	global $emcsv_template_id;
+
 	if (!isset($_POST['emcsvupload']) || !wp_verify_nonce($_POST['emcsvupload'], 'emcsv_update_map_template'))
 		return false;
 
@@ -506,15 +510,18 @@ function emcsv_update_map_template() {
 		endif;
 	endforeach;
 
-	if (isset($_POST['id'])) :
+	if (isset($_POST['id']) && is_numeric($_POST['id'])) :
 		$options[$_POST['id']]=$form_data; // update array
+		$emcsv_template_id=$_POST['id'];
 	else :
 		$options[]=$form_data; // append to our array
+		end($options); // set pointer to end
+		$emcsv_template_id=key($options); // fetches key of pointer (end);
 	endif;
 
 	update_option('emcsv_map_templates', $options); // update stored option
 
-	echo '<div class="updated">Template updated.</div>';
+	echo '<div class="updated">Template #'.$emcsv_template_id.' updated.</div>';
 }
 add_action('init','emcsv_update_map_template');
 
@@ -526,10 +533,15 @@ add_action('init','emcsv_update_map_template');
  * @return void
  */
 function emcsv_get_map_template_values($id=-1) {
-	if (isset($_GET['id']))
-		$id=$_GET['id'];
+	global $emcsv_template_id;
 
-	if ($id<0)
+	if ($emcsv_template_id && $emcsv_template_id!='') :
+		$id=$emcsv_template_id;
+	elseif (isset($_GET['id'])) :
+		$id=$_GET['id'];
+	endif;
+
+	if ($id<0 || $id=='')
 		return false;
 
 	$options=get_option('emcsv_map_templates', array());
@@ -541,6 +553,10 @@ function emcsv_get_map_template_values($id=-1) {
 }
 
 function emcsv_map_template_check_value($options=array(),$name='') {
+	if (empty($options))
+		return '';
+
+	// cycle through options and see if we have matches //
 	foreach ($options as $option => $value) :
 		if (is_array($value)) :
 			foreach ($value as $a_option => $a_value) :
@@ -561,7 +577,12 @@ function emcsv_map_template_check_value($options=array(),$name='') {
 }
 
 function emcsv_map_id() {
-	if (isset($_GET['id']))
+	global $emcsv_template_id;
+
+	if ($emcsv_template_id && $emcsv_template_id!='') :
+		echo $emcsv_template_id;
+	elseif (isset($_GET['id'])) :
 		echo $_GET['id'];
+	endif;
 }
 ?>

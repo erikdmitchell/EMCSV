@@ -13,7 +13,7 @@
 		delete
 	<?php elseif (isset($_GET['action'])) : ?>
 		<?php $values=emcsv_get_map_template_values(); ?>
-<?php print_r($values); ?>
+
 		<div class="emcsv-maps-nav">
 			<a href="<?php echo wp_nonce_url(admin_url('tools.php?page=dummy'), 'emcsv-goto-preset-map', 'emcsv_preset_map'); ?>">View Map Templates</a>
 		</div>
