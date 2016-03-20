@@ -18,6 +18,7 @@ function emcsv_map_csv_header_fields($return=false) {
 }
 */
 
+/*
 function emcsv_map_file_dropdown($args=array(),$return=false) {
 	global $EMCSVUpload;
 
@@ -26,6 +27,7 @@ function emcsv_map_file_dropdown($args=array(),$return=false) {
 
 	echo $EMCSVUpload->map_file_dropdown($args);
 }
+*/
 
 /*
 function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
@@ -35,23 +37,20 @@ function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='pos
 }
 */
 
-// used
-function emcsv_get_csv_maps_dropdown() {
-	echo 'function to be built';
-	// we need an option to store (and a page to manage) preset dropdowns
-/*
-		$html=null;
-		$maps=$wpdb->get_results("SELECT * FROM $wpdb->ulm_map");
+function emcsv_get_csv_maps_dropdown($echo=true) {
+	$html=null;
+	$option=get_option('emcsv_csv_maps', array());
 
-		$html.='<select name="map_id" id="map_name_dropdown">';
-			$html.='<option value="0">'.__('-- Select One --','ulm').'</option>';
-			foreach ($maps as $map) :
-				$html.='<option value="'.$map->id.'">'.$map->name.'</option>';
-			endforeach;
-		$html.='</select>';
+	if (!$option || empty($option)) :
+		$html.='No preset maps.';
+	else :
 
-		return $html;
-*/
+	endif;
+
+	if ($echo)
+		echo $html;
+
+	return $html;
 }
 
 /*
@@ -367,5 +366,60 @@ function emcsv_get_all_taxonomies() {
 	$taxonomies=$wpdb->get_col("SELECT DISTINCT(taxonomy) FROM {$wpdb->term_taxonomy}");
 
 	return $taxonomies;
+}
+
+/**
+ * emcsv_get_post_types_dropdown function.
+ *
+ * @access public
+ * @param array $args (default: array())
+ * @param string $operator (default: 'and')
+ * @param bool $echo (default: false)
+ * @return void
+ */
+function emcsv_get_post_types_dropdown($args=array(), $operator='and', $echo=false) {
+	$html=null;
+	$post_types=get_post_types($args, 'names', $operator);
+
+	$html.='<select name="emcsv_post_types" id="emcsv_post_types">';
+		$html.='<option value="0">-- Select One --</option>';
+		foreach ($post_types as $value => $name) :
+			$html.='<option value="'.$value.'">'.$name.'</option>';
+		endforeach;
+	$html.='</select>';
+
+	if ($echo)
+		echo $html;
+
+	return $html;
+}
+
+/**
+ * emcsv_get_post_status_dropdown function.
+ *
+ * @access public
+ * @param bool $echo (default: false)
+ * @return void
+ */
+function emcsv_get_post_status_dropdown($echo=false) {
+	$html=null;
+	$post_statuses=array(
+		'csv' => 'Status in CSV',
+		'publish' => 'Publish',
+		'draft' => 'Draft',
+		'pending' => 'Pending',
+		'private' => 'Private',
+	);
+
+	$html.='<select name="emcsv_post_status" id="emcsv_post_status">';
+		foreach ($post_statuses as $value => $name) :
+			$html.='<option value="'.$value.'">'.$name.'</option>';
+		endforeach;
+	$html.='</select>';
+
+	if ($echo)
+		echo $html;
+
+	return $html;
 }
 ?>

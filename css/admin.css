@@ -1,6 +1,14 @@
 /**
  * MAP FIELDS
  */
+.emcsvupload-map-fields label {
+	font-weight: bold;
+	width: 160px;
+	display: inline-block;
+}
+.emcsvupload-map-fields .map-row {
+	padding: 0 10px 10px 5px;
+}
 .emcsv-map-form th {
 	padding: 10px 10px 10px 5px;
 }

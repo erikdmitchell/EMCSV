@@ -18,14 +18,19 @@ $column_counter=0;
 		<input type="hidden" name="db_field_names" id="db_field_names" value="">
 		<?php wp_nonce_field('emcsv_map_fields','emcsvupload'); ?>
 
-Select post type (dd)<br>
-Import with post status(dd)<br>
-
-		<div class="csv-header-map-name">
-			<label for="map_name"><?php _e('Name', 'emcsvupload'); ?></label>
+		<div class="csv-header-map-name map-row">
+			<label for="map_name"><?php _e('Map Name', 'emcsvupload'); ?></label>
 			<?php echo emcsv_get_csv_maps_dropdown(); ?>
-			<a href="#" id="add-new-map-name"><?php _e('or Add New Name', 'emcsvupload'); ?></a>
-			<input type="text" name="map_name" id="map_name" class="regular-text active validate" value="" />
+		</div>
+
+		<div class="emcsv-post-type map-row">
+			<label for="emcsv_post_types"><?php _e('Select Post Type', 'emcsvupload'); ?></label>
+			<?php echo emcsv_get_post_types_dropdown(); ?>
+		</div>
+
+		<div class="emcsv-post-status map-row">
+			<label for="emcsv_post_status"><?php _e('Import with post status:', 'emcsvupload'); ?></label>
+			<?php echo emcsv_get_post_status_dropdown(); ?>
 		</div>
 
 		<?php emcsv_map_fields($_GET['file'], $_GET['has_header']); ?>
