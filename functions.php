@@ -274,6 +274,16 @@ function emcsv_get_custom_fields() {
 	return $wp_fields;
 }
 
+/**
+ * emcsv_get_meta_keys function.
+ *
+ * @access public
+ * @param bool $show_hidden (default: false)
+ * @param bool $wp_defaults (default: false)
+ * @param bool $type (default: false)
+ * @param bool $status (default: false)
+ * @return void
+ */
 function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
     global $wpdb;
 
@@ -311,7 +321,7 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
 		$where=' WHERE '.implode(' AND ', $where);
     endif;
 
-	echo $sql="
+	$sql="
 		SELECT DISTINCT(pm.meta_key)
 		FROM {$wpdb->postmeta} pm
         LEFT JOIN {$wpdb->posts} p
@@ -321,13 +331,6 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
 
     $results = $wpdb->get_col($sql);
 
-/*
-_wp_
-_menu_
-*/
-echo '<pre>';
-print_r($results);
-echo '</pre>';
     return $results;
 }
 ?>
