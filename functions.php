@@ -1,10 +1,13 @@
 <?php
+/*
 function emcsv_file_input_field() {
 	global $EMCSVUpload;
 
 	echo $EMCSVUpload->upload_file_input();
 }
+*/
 
+/*
 function emcsv_map_csv_header_fields($return=false) {
 	global $EMCSVUpload;
 
@@ -13,6 +16,7 @@ function emcsv_map_csv_header_fields($return=false) {
 
 	echo $EMCSVUpload->map_csv_header_fields();
 }
+*/
 
 function emcsv_map_file_dropdown($args=array(),$return=false) {
 	global $EMCSVUpload;
@@ -23,12 +27,15 @@ function emcsv_map_file_dropdown($args=array(),$return=false) {
 	echo $EMCSVUpload->map_file_dropdown($args);
 }
 
+/*
 function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
 	global $EMCSVUpload;
 
 	$EMCSVUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
 }
+*/
 
+// used
 function emcsv_get_csv_maps_dropdown() {
 	echo 'function to be built';
 	// we need an option to store (and a page to manage) preset dropdowns
@@ -47,6 +54,7 @@ function emcsv_get_csv_maps_dropdown() {
 */
 }
 
+/*
 function emcsv_map_fields_output($dropdown_args=array()) {
 	global $EMCSVUpload;
 
@@ -73,6 +81,7 @@ function emcsv_map_fields_output($dropdown_args=array()) {
 
 	echo $html;
 }
+*/
 
 /**
  * emcsv_map_fields function.
@@ -99,7 +108,9 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
  	//$html.='<div class="csv-map">';
 		$html.='<tr>';
 			$html.='<th>';
-				$html.=__('CSV Headers','ulm');
+				$html.=__('WP Fields','emcsvupload');
+
+				emcsv_get_fields();
 
 /*
 wordpress fields
@@ -152,6 +163,17 @@ function emcsv_get_attachment_id($file_url='') {
 	return $attachment_id;
 }
 
+/**
+ * emcsv_csv_headers_dropdown function.
+ *
+ * @access public
+ * @param string $name (default: 'emcsvname')
+ * @param string $attachment_path (default: '')
+ * @param string $delimiter (default: ')
+ * @param mixed '
+ * @param bool $echo (default: true)
+ * @return void
+ */
 function emcsv_csv_headers_dropdown($name='emcsvname', $attachment_path='', $delimiter=',', $echo=true) {
 	$html=null;
 	$headers=emcsv_get_csv_header($attachment_path);
@@ -202,5 +224,88 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	endif;
 
 	return $header;
+}
+
+function emcsv_get_fields() {
+	$wp_fields=emcsv_get_wordpress_fields();
+	$custom_fields=emcsv_get_meta_keys();
+}
+
+/**
+ * emcsv_get_wordpress_fields function.
+ *
+ * @access public
+ * @return void
+ */
+function emcsv_get_wordpress_fields() {
+	$wp_fields=array(
+		'post_title',
+		'post_content',
+		'post_excerpt',
+		'post_date',
+		'post_name',
+		'post_author',
+		'featured_image',
+		'post_parent',
+		'post_status',
+		'post_format',
+		'menu_order',
+	);
+	// apply_filters
+
+	return $wp_fields;
+}
+function emcsv_get_custom_fields() {
+	$default_fields=array(
+		'post_title',
+		'post_content',
+		'post_excerpt',
+		'post_date',
+		'post_name',
+		'post_author',
+		'featured_image',
+		'post_parent',
+		'post_status',
+		'post_format',
+		'menu_order',
+	);
+	$wp_fields=wp_parse_args($fields,$default_fields);
+
+	return $wp_fields;
+}
+
+function emcsv_get_meta_keys($type=false, $status=false) {
+    global $wpdb;
+
+    $where=array();
+
+    if ($type)
+    	$where[]="p.post_type = '{$type}'";
+
+    if ($status)
+    	$where[]="p.post_status = '{$status}'";
+
+    if (empty($where)) :
+    	$where='';
+    else :
+		$where=' WHERE '.implode(' AND ', $where);
+    endif;
+echo "SELECT pm.meta_key FROM {$wpdb->postmeta} pm
+        LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+        $where";
+    $results = $wpdb->get_col("
+        SELECT pm.meta_key FROM {$wpdb->postmeta} pm
+        LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+        $where
+    ");
+
+/*
+_wp_
+_menu_
+*/
+echo '<pre>';
+print_r($results);
+echo '</pre>';
+    return $results;
 }
 ?>
