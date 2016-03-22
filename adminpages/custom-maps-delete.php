@@ -10,7 +10,18 @@
 	<h2><?php _e('Custom Maps', 'emcsvupload'); ?></h2>
 
 	<?php if (isset($_GET['action']) && $_GET['action']=='delete') : ?>
-		delete
+		<form name="emcsv_delete_map_template">
+			<input type="hidden" name="action" value="delete">
+			<input type="hidden" name="id" value=<?php echo $_GET['id']; ?>>
+			<input type="hidden" name="page" value="dummy">
+			<?php wp_nonce_field('emcsv_preset_map', 'emcsvupload', false); ?>
+			<p>
+				Delete template <?php echo $_GET['id']; ?>?
+			</p>
+			<p class="submit">
+				<input type="submit" name="submit" id="submit" class="button button-primary" value="Delete">
+			</p>
+		</form>
 	<?php elseif (isset($_GET['action'])) : ?>
 		<?php $values=emcsv_get_map_template_values(); ?>
 

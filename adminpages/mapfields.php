@@ -6,9 +6,6 @@
  */
 ?>
 
-<?php
-$column_counter=0;
-?>
 <div class="emcsvupload-map-fields">
 	<h2><?php _e('Map Fields','emcsvupload'); ?></h2>
 	<form method="post" action="" id="map-fields-form">

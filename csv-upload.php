@@ -1,26 +1,35 @@
 <?php
+/*
+Plugin Name: EMCSV
+Plugin URI:
+Description: Used for help with developing plugin classes and code.
+Version:     0.1.0
+Author:      Erik Mitchell
+Author URI:  http://erikmitchell.net
+License:     GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Domain Path: /languages
+Text Domain: emcsv
+*/
+
 // set/define some globals //
 define('EMCSVUPLOAD_PATH', plugin_dir_path(__FILE__));
 
 // require our files //
 require_once(EMCSVUPLOAD_PATH.'class-csv-upload.php');
 require_once(EMCSVUPLOAD_PATH.'functions.php');
+require_once(EMCSVUPLOAD_PATH.'custom-maps.php'); // custom maps functionality
 require_once(EMCSVUPLOAD_PATH.'lib/get-template-part.php');
 
-/*
-hook our admin pages up
-the idea is to have a function/shortcode we can drop in that will basically run itself
-it would have our admin pages and then it could run within the admin section on its own
+// admin menu //
+function emcsv_admin_menu() {
+	add_menu_page('CSV Upload', 'CSV Upload', 'manage_options', 'emcsv', 'emcsv_admin_page');
+	add_submenu_page('emcsv', 'Preset Maps', 'Preset Maps', 'manage_options', 'emcsv-preset-maps', 'emcsv_preset_maps');
+}
+add_action('admin_menu', 'emcsv_admin_menu');
 
--------
-X TWEAK get-template-part.php
-emscvupload_get_template_part();
-include admin pages
-test running of admin pages as is
-rework pages like ultimate csv (see dropbox for visiuals)
-*/
-
-function emcsvupload() {
+// admin page //
+function emcsv_admin_page() {
 	$slug=emcsv_get_template_slug();
 
 	echo '<div class="wrap">';
@@ -30,15 +39,26 @@ function emcsvupload() {
 	echo '</div>';
 }
 
+function emcsv_preset_maps() {
+	echo '<div class="wrap">';
+		echo '<h1>CSV Uploader</h1>';
+
+		if (isset($_GET['action'])) :
+			if ($_GET['action']=='add' || $_GET['action']=='edit') :
+				emscvupload_get_template_part('custom','maps-edit');
+			endif;
+		else :
+			emscvupload_get_template_part('custom','maps');
+		endif;
+	echo '</div>';
+}
+
 function emcsv_get_template_slug() {
 	$slug='main'; // default
 
 	if (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
 		$slug='mapfields'; // after we add our file
-	elseif (isset($_GET['emcsv_preset_map']) && wp_verify_nonce($_GET['emcsv_preset_map'], 'emcsv-goto-preset-map')) :
-		$slug='maps'; // our add/edit custom maps screen
 	endif;
-
 
 	return $slug;
 }

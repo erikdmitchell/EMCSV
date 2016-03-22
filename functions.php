@@ -1,6 +1,4 @@
 <?php
-global $emcsv_template_id;
-
 /*
 function emcsv_file_input_field() {
 	global $EMCSVUpload;
@@ -228,40 +226,7 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	return $header;
 }
 
-/**
- * emcsv_get_fields function.
- *
- * @access public
- * @return void
- */
-function emcsv_get_fields($raw=false) {
-	if ($raw) :
-		$wp_fields=emcsv_get_wordpress_fields();
-		$meta_fields=emcsv_get_meta_keys(true);
-		$taxonomies=emcsv_get_all_taxonomies();
 
-		$fields=$wp_fields+$meta_fields+$taxonomies;
-
-		return $fields;
-	endif;
-
-	$fields=array(
-		'wp_fields' => array(
-			'name' =>	'WordPress Fields',
-			'fields' => emcsv_get_wordpress_fields(),
-		),
-		'custom_fields' => array(
-			'name' =>	'Custom Fields',
-			'fields' => emcsv_get_meta_keys(true),
-		),
-		'taxonomies' => array(
-			'name' =>	'Taxonomy Fields',
-			'fields' => emcsv_get_all_taxonomies(),
-		),
-	);
-
-	return $fields;
-}
 
 /**
  * emcsv_get_wordpress_fields function.
@@ -457,132 +422,33 @@ function emcsv_add_preset_map_url($echo=false) {
 	return $url;
 }
 
-function emcsv_get_csv_maps_table_rows($echo=true) {
-	$html=null;
-	$options=get_option('emcsv_map_templates', array());
 
-	if (!$options || empty($options))
-		return false;
 
-	//$options=unserialize($options);
 
-	foreach ($options as $id => $option) :
-		$html.='<tr>';
-			$html.='<td>'.$id.'</td>';
-			$html.='<td>'.$option['template_name'].'</td>';
-			$html.='<td>';
-				$html.='<a href="'.home_url().esc_url( add_query_arg( array('action' => 'edit', 'id' => $id ) ) ).'">Edit</a> | <a href="#">Delete</a>';
-			$html.='</td>';
-		$html.='</tr>';
-	endforeach;
 
-	if ($echo)
-		echo $html;
+function emcsv_delete_map_template() {
+//print_r($_GET);
+//exit;
+	//if (!isset($_GET['emcsvupload']) || !wp_verify_nonce($_GET['emcsvupload'], 'emcsv_delete_map_template') || !isset($_GET['id']))
+		//return false;
 
-	return $html;
-}
+	if (isset($_GET['emcsvupload']) && isset($_GET['id']) && isset($_GET['action'])) :
+		$options=get_option('emcsv_map_templates', array());
+		unset($options[$_GET['id']]); // remove option from array
 
-function emcsv_custom_map_url($action='') {
-	echo home_url().esc_url( add_query_arg( 'action', $action ) );
-}
+		update_option('emcsv_map_templates', $options); // update stored option
 
-/**
- * emcsv_update_map_template function.
- *
- * @access public
- * @return void
- */
-function emcsv_update_map_template() {
-	global $emcsv_template_id;
+		$url=wp_nonce_url(admin_url('tools.php?page=dummy'), 'emcsv-goto-preset-map', 'emcsv_preset_map');
 
-	if (!isset($_POST['emcsvupload']) || !wp_verify_nonce($_POST['emcsvupload'], 'emcsv_update_map_template'))
-		return false;
-
-	$options=get_option('emcsv_map_templates', array());
-	$form_data=array();
-
-	$form_data['template_name']=sanitize_text_field($_POST['template_name']); // store template name
-
-	// get any filled in field values and store //
-	foreach ($_POST['fields'] as $name => $value) :
-		if ($value!='') :
-			$form_data['fields'][$name]=sanitize_text_field($value);
-		endif;
-	endforeach;
-
-	if (isset($_POST['id']) && is_numeric($_POST['id'])) :
-		$options[$_POST['id']]=$form_data; // update array
-		$emcsv_template_id=$_POST['id'];
-	else :
-		$options[]=$form_data; // append to our array
-		end($options); // set pointer to end
-		$emcsv_template_id=key($options); // fetches key of pointer (end);
-	endif;
-
-	update_option('emcsv_map_templates', $options); // update stored option
-
-	echo '<div class="updated">Template #'.$emcsv_template_id.' updated.</div>';
-}
-add_action('init','emcsv_update_map_template');
-
-/**
- * emcsv_get_map_template_values function.
- *
- * @access public
- * @param float $id (default: -1)
- * @return void
- */
-function emcsv_get_map_template_values($id=-1) {
-	global $emcsv_template_id;
-
-	if ($emcsv_template_id && $emcsv_template_id!='') :
-		$id=$emcsv_template_id;
-	elseif (isset($_GET['id'])) :
-		$id=$_GET['id'];
-	endif;
-
-	if ($id<0 || $id=='')
-		return false;
-
-	$options=get_option('emcsv_map_templates', array());
-
-	if (!isset($options[$id]))
-		return false;
-
-	return $options[$id];
-}
-
-function emcsv_map_template_check_value($options=array(),$name='') {
-	if (empty($options))
-		return '';
-
-	// cycle through options and see if we have matches //
-	foreach ($options as $option => $value) :
-		if (is_array($value)) :
-			foreach ($value as $a_option => $a_value) :
-				if ($a_option==$name) :
-					return $a_value;
-					//break;
-				endif;
-			endforeach;
-		else :
-			if ($option==$name) :
-				return $value;
-				//break;
-			endif;
-		endif;
-	endforeach;
-
-	return '';
-}
-
-function emcsv_map_id() {
-	global $emcsv_template_id;
-
-	if ($emcsv_template_id && $emcsv_template_id!='') :
-		echo $emcsv_template_id;
-	elseif (isset($_GET['id'])) :
-		echo $_GET['id'];
+		wp_redirect($url); // redirect to main template page
+		exit();
 	endif;
 }
+add_action('admin_init','emcsv_delete_map_template');
+
+
+
+
+
+
 ?>
