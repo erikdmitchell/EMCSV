@@ -21,14 +21,26 @@ require_once(EMCSVUPLOAD_PATH.'functions.php');
 require_once(EMCSVUPLOAD_PATH.'custom-maps.php'); // custom maps functionality
 require_once(EMCSVUPLOAD_PATH.'lib/get-template-part.php');
 
-// admin menu //
+
+/**
+ * emcsv_admin_menu function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_admin_menu() {
 	add_menu_page('CSV Upload', 'CSV Upload', 'manage_options', 'emcsv', 'emcsv_admin_page');
 	add_submenu_page('emcsv', 'Preset Maps', 'Preset Maps', 'manage_options', 'emcsv-preset-maps', 'emcsv_preset_maps');
 }
 add_action('admin_menu', 'emcsv_admin_menu');
 
-// admin page //
+
+/**
+ * emcsv_admin_page function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_admin_page() {
 	$slug=emcsv_get_template_slug();
 
@@ -39,6 +51,12 @@ function emcsv_admin_page() {
 	echo '</div>';
 }
 
+/**
+ * emcsv_preset_maps function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_preset_maps() {
 	echo '<div class="wrap">';
 		echo '<h1>CSV Uploader</h1>';
@@ -55,6 +73,12 @@ function emcsv_preset_maps() {
 	echo '</div>';
 }
 
+/**
+ * emcsv_get_template_slug function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_get_template_slug() {
 	$slug='main'; // default
 
@@ -63,24 +87,5 @@ function emcsv_get_template_slug() {
 	endif;
 
 	return $slug;
-}
-
-/**
- * emcsv_referer_page function.
- *
- * @access public
- * @param bool $echo (default: true)
- * @return void
- */
-function emcsv_referer_page($echo=true) {
-	$page='';
-
-	if (isset($_GET['page']))
-		$page=$_GET['page'];
-
-	if ($echo)
-		echo $page;
-
-	return $page;
 }
 ?>

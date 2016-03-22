@@ -60,35 +60,6 @@ function emcsv_get_csv_maps_dropdown($echo=false) {
 	return $html;
 }
 
-/*
-function emcsv_map_fields_output($dropdown_args=array()) {
-	global $EMCSVUpload;
-
-	$html=null;
-	$headers=$EMCSVUpload->get_headers();
-
-	$html.='<tr>';
-		$html.='<th scope="row">';
-			$html.='<label for="header_fields">'.__('Header Fields','EM').'</label>';
-		$html.='</th>';
-		$html.='<th scope="row">';
-			$html.='<label for="map_fields">'.__('Map Fields','EM').'</label>';
-		$html.='</th>';
-	$html.='</tr>';
-
-	foreach ($headers as $header) :
-		$html.='<tr>';
-			$html.='<td>'.$header.'</td>';
-			$html.='<td>';
-				$html.=emcsv_map_file_dropdown($dropdown_args,true);
-			$html.='</td>';
-		$html.='</tr>';
-	endforeach;
-
-	echo $html;
-}
-*/
-
 /**
  * emcsv_map_fields function.
  *
@@ -101,6 +72,14 @@ function emcsv_map_fields($file=false,$has_header=false) {
 	echo emcsv_get_csv_map_fields($file,$has_header);
 }
 
+/**
+ * emcsv_get_csv_map_fields function.
+ *
+ * @access public
+ * @param bool $file (default: false)
+ * @param bool $has_header (default: false)
+ * @return void
+ */
 function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 	if (!$file)
 		return false;
@@ -225,8 +204,6 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 
 	return $header;
 }
-
-
 
 /**
  * emcsv_get_wordpress_fields function.
@@ -406,31 +383,4 @@ function emcsv_get_post_status_dropdown($echo=false) {
 
 	return $html;
 }
-
-function emcsv_add_preset_map_url($echo=false) {
-	$screen=get_current_screen();
-	$url=admin_url($screen->parent_file);
-
-	if (isset($_GET['page']))
-		$url.='?page='.$_GET['page'];
-
-	$url=wp_nonce_url($url, 'emcsv-goto-preset-map', 'emcsv_preset_map');
-
-	if ($echo)
-		echo $url;
-
-	return $url;
-}
-
-
-
-
-
-
-
-
-
-
-
-
 ?>
