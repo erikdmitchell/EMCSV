@@ -46,6 +46,8 @@ function emcsv_preset_maps() {
 		if (isset($_GET['action'])) :
 			if ($_GET['action']=='add' || $_GET['action']=='edit') :
 				emscvupload_get_template_part('custom','maps-edit');
+			elseif ($_GET['action']=='delete') :
+				emscvupload_get_template_part('custom','maps-delete');
 			endif;
 		else :
 			emscvupload_get_template_part('custom','maps');

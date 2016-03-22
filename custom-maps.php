@@ -32,14 +32,17 @@ function emcsv_get_csv_maps_table_rows($echo=true) {
 }
 
 /**
- * emcsv_custom_map_url function.
+ * emcsv_get_custom_map_url function.
  *
  * @access public
  * @param string $action (default: '')
  * @return void
  */
-function emcsv_custom_map_url($action='') {
-	echo admin_url('/admin.php?page=emcsv-preset-maps&action='.$action);
+function emcsv_get_custom_map_url($action='') {
+	if ($action && $action!='')
+		$action="&action=$action";
+
+	return admin_url('/admin.php?page=emcsv-preset-maps'.$action);
 }
 
 /**
@@ -83,6 +86,14 @@ function emcsv_get_map_id($_id=false) {
 	return $id;
 }
 
+/**
+ * emcsv_map_template_check_value function.
+ *
+ * @access public
+ * @param array $options (default: array())
+ * @param string $name (default: '')
+ * @return void
+ */
 function emcsv_map_template_check_value($options=array(),$name='') {
 	if (empty($options))
 		return '';
@@ -173,4 +184,19 @@ function emcsv_update_map_template() {
 	echo '<div class="updated">Template #'.$_POST['id'].' updated.</div>';
 }
 add_action('admin_init','emcsv_update_map_template');
+
+function emcsv_delete_map_template() {
+	if (!isset($_POST['emcsvupload']) || !wp_verify_nonce($_POST['emcsvupload'], 'emcsv_custom_map_delete'))
+		return false;
+
+	$options=get_option('emcsv_map_templates', array());
+
+	unset($options[$_POST['id']]); // remove option from array
+
+	update_option('emcsv_map_templates', $options); // update stored option
+
+	wp_redirect(emcsv_get_custom_map_url());
+	exit;
+}
+add_action('admin_init','emcsv_delete_map_template');
 ?>

@@ -23,6 +23,6 @@
 	</table>
 
 	<p class="submit">
-		<a href="<?php emcsv_custom_map_url('add'); ?>" class="button button-primary">Add New Map</a>
+		<a href="<?php echo emcsv_get_custom_map_url('add'); ?>" class="button button-primary">Add New Map</a>
 	</p>
 </div>

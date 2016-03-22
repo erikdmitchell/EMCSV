@@ -426,25 +426,7 @@ function emcsv_add_preset_map_url($echo=false) {
 
 
 
-function emcsv_delete_map_template() {
-//print_r($_GET);
-//exit;
-	//if (!isset($_GET['emcsvupload']) || !wp_verify_nonce($_GET['emcsvupload'], 'emcsv_delete_map_template') || !isset($_GET['id']))
-		//return false;
 
-	if (isset($_GET['emcsvupload']) && isset($_GET['id']) && isset($_GET['action'])) :
-		$options=get_option('emcsv_map_templates', array());
-		unset($options[$_GET['id']]); // remove option from array
-
-		update_option('emcsv_map_templates', $options); // update stored option
-
-		$url=wp_nonce_url(admin_url('tools.php?page=dummy'), 'emcsv-goto-preset-map', 'emcsv_preset_map');
-
-		wp_redirect($url); // redirect to main template page
-		exit();
-	endif;
-}
-add_action('admin_init','emcsv_delete_map_template');
 
 
 
