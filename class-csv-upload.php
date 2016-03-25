@@ -4,8 +4,8 @@
  */
 class EMCSVUpload {
 
-	public $version='0.1.0';
-	public $csv_headers=array();
+	//public $version='0.1.0';
+	//public $csv_headers=array();
 
 	/**
 	 * __construct function.
@@ -14,8 +14,8 @@ class EMCSVUpload {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action('admin_enqueue_scripts',array($this,'admin_scripts_styles'));
-		add_action('wp_ajax_add_csv_row_to_db',array($this,'ajax_add_csv_row_to_db'));
+		//add_action('admin_enqueue_scripts',array($this,'admin_scripts_styles'));
+		//add_action('wp_ajax_add_csv_row_to_db',array($this,'ajax_add_csv_row_to_db'));
 	}
 
 	/**
@@ -24,6 +24,7 @@ class EMCSVUpload {
 	 * @access public
 	 * @return void
 	 */
+/*
 	public function admin_scripts_styles() {
 		wp_enqueue_script('csv-upload-script',plugins_url('js/csv-upload.js',__FILE__),array('jquery'),$this->version);
 		wp_enqueue_script('custom-media-uploader', plugins_url('lib/js/custom-media-uploader.js', __FILE__), array('jquery'));
@@ -35,6 +36,7 @@ class EMCSVUpload {
 
 		wp_enqueue_media();
 	}
+*/
 
 	/**
 	 * upload_file_input function.
@@ -42,6 +44,7 @@ class EMCSVUpload {
 	 * @access public
 	 * @return void
 	 */
+/*
 	public function upload_file_input() {
 		$html=null;
 
@@ -67,6 +70,7 @@ class EMCSVUpload {
 
 		return $html;
 	}
+*/
 
 	/**
 	 * map_csv_header_fields function.
@@ -74,6 +78,7 @@ class EMCSVUpload {
 	 * @access public
 	 * @return void
 	 */
+/*
 	public function map_csv_header_fields() {
 		$html=null;
 
@@ -83,6 +88,7 @@ class EMCSVUpload {
 
 		return $html;
 	}
+*/
 
 	/**
 	 * get_headers function.
@@ -90,9 +96,11 @@ class EMCSVUpload {
 	 * @access public
 	 * @return void
 	 */
+/*
 	public function get_headers() {
 		return $this->csv_headers;
 	}
+*/
 
 	/**
 	 * map_file_dropdown function.
@@ -101,6 +109,7 @@ class EMCSVUpload {
 	 * @param array $args (default: array())
 	 * @return void
 	 */
+/*
 	public function map_file_dropdown($args=array()) {
 		$html=null;
 		$default_args=array(
@@ -129,6 +138,7 @@ class EMCSVUpload {
 
 		return $html;
 	}
+*/
 
 	/**
 	 * get_csv_header function.
@@ -139,6 +149,7 @@ class EMCSVUpload {
 	 * @param mixed '
 	 * @return void
 	 */
+/*
 	public function get_csv_header($filename='',$delimiter=',') {
 		if (!file_exists($filename) || !is_readable($filename))
 			return false;
@@ -164,6 +175,7 @@ class EMCSVUpload {
 
 		$this->csv_headers=$header;
 	}
+*/
 
 	/**
 	 * process_csv_file function.
@@ -200,6 +212,7 @@ class EMCSVUpload {
 	 * @param string $post_type (default: 'post')
 	 * @return void
 	 */
+/*
 	protected function csv_ajax_loader_form($data=array(),$post_type='post') {
 		$html=null;
 
@@ -224,6 +237,7 @@ class EMCSVUpload {
 		";
 		return $html;
 	}
+*/
 
 	/**
 	 * ajax_add_csv_row_to_db function.
@@ -297,6 +311,7 @@ class EMCSVUpload {
 	 * @param string $url (default: '')
 	 * @return void
 	 */
+/*
 	public function get_attachment_id_from_url($url='') {
 		global $wpdb;
 
@@ -304,6 +319,7 @@ class EMCSVUpload {
 
 		return $attachment[0];
 	}
+*/
 
 	/**
 	 * csv_to_array function.

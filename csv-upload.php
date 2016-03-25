@@ -90,4 +90,28 @@ function emcsv_get_template_slug() {
 
 	return $slug;
 }
+
+/**
+ * emcsv_admin_scripts_styles function.
+ *
+ * @access public
+ * @param mixed $hook
+ * @return void
+ */
+function emcsv_admin_scripts_styles($hook) {
+// csv-upload_page_emcsv-preset-maps // preset maps
+	if ($hook=='toplevel_page_emcsv') :
+		wp_enqueue_script('csv-upload-script',plugins_url('js/csv-upload.js',__FILE__),array('jquery')); // main
+		wp_enqueue_script('custom-media-uploader', plugins_url('lib/js/custom-media-uploader.js', __FILE__), array('jquery')); // main
+		wp_enqueue_script('emcsv-mapfields-script', plugins_url('js/mapfields.js', __FILE__), array('jquery')); // mapfields
+		wp_enqueue_script('em-wp-loader-script', plugins_url('js/em-wp-loader.js', __FILE__), array('jquery')); // upload
+
+		wp_enqueue_style('em-wp-loader-style', plugins_url('css/em-wp-loader.css', __FILE__)); // upload
+
+		wp_enqueue_media(); // main
+	endif;
+
+	wp_enqueue_style('emcsv-admin-style', plugins_url('css/admin.css', __FILE__)); // all
+}
+add_action('admin_enqueue_scripts','emcsv_admin_scripts_styles');
 ?>
