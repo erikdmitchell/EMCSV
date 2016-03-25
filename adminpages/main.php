@@ -7,8 +7,8 @@
 ?>
 <div class="emcsvupload">
 	<h2><?php _e('Add File','emcsvupload'); ?></h2>
-	<form method="get" action="" id="add-file-form">
-		<input type="hidden" name="page" value="<?php emcsv_referer_page(); ?>">
+	<form action="" id="add-file-form">
+		<input type="hidden" name="page" value="emcsv">
 		<?php wp_nonce_field('emcsv_add_file', 'emcsvupload', false); ?>
 
 		<table class="form-table add-file">

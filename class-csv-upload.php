@@ -27,6 +27,7 @@ class EMCSVUpload {
 	public function admin_scripts_styles() {
 		wp_enqueue_script('csv-upload-script',plugins_url('js/csv-upload.js',__FILE__),array('jquery'),$this->version);
 		wp_enqueue_script('custom-media-uploader', plugins_url('lib/js/custom-media-uploader.js', __FILE__), array('jquery'));
+		wp_enqueue_script('emcsv-mapfields-script', plugins_url('js/mapfields.js', __FILE__), array('jquery'));
 
 		wp_enqueue_style('emcsv-admin-style', plugins_url('css/admin.css', __FILE__));
 

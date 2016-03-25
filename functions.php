@@ -365,7 +365,7 @@ function emcsv_get_post_types_dropdown($args=array(), $operator='and', $echo=fal
 function emcsv_get_post_status_dropdown($echo=false) {
 	$html=null;
 	$post_statuses=array(
-		'csv' => 'Status in CSV',
+		'0' => 'Status in CSV',
 		'publish' => 'Publish',
 		'draft' => 'Draft',
 		'pending' => 'Pending',
