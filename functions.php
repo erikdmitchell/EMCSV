@@ -441,37 +441,115 @@ function emcsv_upload_clean_fields_map($map=array()) {
 	return array_filter($map);
 }
 
+function emcsv_ajax_add_csv_row_to_db() {
+	$return=array();
+	$post=array();
+	$row=$_POST['row'];
+	$post_id=0;
+
+/*
+	// trim whitespace from row //
+	foreach ($row as $key => $value) :
+		$row[$key]=trim($value);
+	endforeach;
+
+	// santaize title for security //
+	if (isset($row['post_title']))
+		$post['post_title']=wp_strip_all_tags($row['post_title']);
+
+	// set post type via our passed variable if not included in $post //
+	if (isset($row['post_type'])) :
+		$post['post_type']=$row['post_type'];
+	elseif ($_POST['post_type']) :
+		$post['post_type']=$_POST['post_type'];
+	else :
+		$post['post_type']='post';
+	endif;
+
+	// set post status tu published if not set //
+	if (!isset($post['post_status']))
+		$post['post_status']='publish';
+
+	// check for and set our post parent //
+	if (isset($row['post_parent']) && $row['post_parent']!='') :
+		$parent=get_page_by_title($row['post_parent'],'OBJECT',$post['post_type']);
+
+		// if we have it, set the id, else set null //
+		if ($parent) :
+			$post['post_parent']=$parent->ID;
+		else :
+			$post['post_parent']=null;
+		endif;
+	endif;
+
+	// insert post //
+	$post_id=wp_insert_post($post,true);
+
+	do_action('emcsv_row_to_db_after_insert_post',$post_id,$post,$row);
+
+	// process our return //
+	if (!$post_id) :
+		$return[]='<div class="error">'.__('Failed to add row to database.','EM').'</div>';
+	elseif (is_wp_error($post_id)) :
+		$return[]=$post_id->get_error_message();
+	else :
+		$return[]='<div class="updated">'.__('Row added to database. (ID: '.$post_id.')','EM').'</div>';
+	endif;
+*/
+
+	echo json_encode($return);
+
+	wp_die();
+}
+add_action('em_wp_loader_run', 'emcsv_ajax_add_csv_row_to_db');
+
 /**
- * emcsv_upload_get_number_of_csv_rows function.
+ * csv_to_array function.
  *
- * @access public
- * @param int $attachment_id (default: 0)
- * @param int $has_header (default: 0)
- * @param string $delimiter (default: ')
- * @param mixed '
- * @return void
+ * Based on Jay Williams csv_to_array function. http://gist.github.com/385876
  */
-function emcsv_upload_get_number_of_csv_rows($attachment_id=0, $has_header=0, $delimiter=',') {
-	if (!$attachment_id)
+function emcsv_csv_to_array($args=array()) {
+	global $emcsv_uploaded_csv_array;
+
+	$default_args=array(
+		'filename' => '',
+		'header' => array(),
+		'delimiter' => ',',
+		'skip_first_row' => true,
+	);
+	$args=array_merge($default_args,$args);
+
+	extract($args);
+
+	if (!file_exists($filename) || !is_readable($filename))
 		return false;
 
-	$counter=0;
-	$filename=get_attached_file($attachment_id);
+	// what if we have a csv file without a header? //
+	if (empty($header))
+		return false;
 
-	ini_set('auto_detect_line_endings',TRUE); // added by EM for issues with MAC
+	ini_set('auto_detect_line_endings',TRUE); // added for issues with MAC
+
+	$data=array();
+	$row_counter=1;
 
 	if (($handle = fopen($filename, 'r')) !== false) :
 
 		while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) :
-			$counter++;
+			if ($skip_first_row && $row_counter==1) :
+				//continue; // skip
+			else :
+				$data[]=array_combine($header,$row);
+			endif;
+
+			$row_counter++;
 		endwhile;
 
 		fclose($handle);
 	endif;
 
-	if ($has_header)
-		$counter=$counter-1; // subtract for header row
+	$emcsv_uploaded_csv_array=$data; // populate global
 
-	return $counter;
+	return;
 }
 ?>

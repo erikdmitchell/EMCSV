@@ -23,7 +23,7 @@
 
 		settings.$wrap=$(this);
 		settings.total=settings.ids.length;
-console.log(settings);
+
 		// converts ids to array if object //
 		if (typeof settings.ids=='object') {
 			settings.ids = Object.keys(settings.ids).map(function (key) {return settings.ids[key]});
