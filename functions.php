@@ -383,4 +383,95 @@ function emcsv_get_post_status_dropdown($echo=false) {
 
 	return $html;
 }
+
+/**
+ * emcsv_upload_check_post_type function.
+ *
+ * @access public
+ * @param int $post_type (default: 0)
+ * @return void
+ */
+function emcsv_upload_check_post_type($post_type=0) {
+	if ($post_type=='' || $post_type==0)
+		$post_type='post';
+
+	return $post_type;
+}
+
+/**
+ * emcsv_upload_check_post_status function.
+ *
+ * @access public
+ * @param string $post_status (default: 'publish')
+ * @param int $attachment_id (default: 0)
+ * @return void
+ */
+function emcsv_upload_check_post_status($post_status='publish', $attachment_id=0) {
+	if ($post_status=='' || $post_status==0) :
+		if ($attachment_id==0) :
+			return 'publish';
+		else :
+			$attachment_path=get_attached_file($attachment_id);
+			$csv_headers=emcsv_get_csv_header($attachment_path);
+
+			// check our headers to make sure post_status exists //
+			foreach ($csv_headers as $header) :
+				if ($header=='post_status') :
+					return 'csv';
+				endif;
+			endforeach;
+		endif;
+	endif;
+
+	return $post_status;
+}
+
+/**
+ * emcsv_upload_clean_fields_map function.
+ *
+ * @access public
+ * @param array $map (default: array())
+ * @return void
+ */
+function emcsv_upload_clean_fields_map($map=array()) {
+	if (empty($map))
+		return array();
+
+	// removes all elements with value of 0 //
+	return array_filter($map);
+}
+
+/**
+ * emcsv_upload_get_number_of_csv_rows function.
+ *
+ * @access public
+ * @param int $attachment_id (default: 0)
+ * @param int $has_header (default: 0)
+ * @param string $delimiter (default: ')
+ * @param mixed '
+ * @return void
+ */
+function emcsv_upload_get_number_of_csv_rows($attachment_id=0, $has_header=0, $delimiter=',') {
+	if (!$attachment_id)
+		return false;
+
+	$counter=0;
+	$filename=get_attached_file($attachment_id);
+
+	ini_set('auto_detect_line_endings',TRUE); // added by EM for issues with MAC
+
+	if (($handle = fopen($filename, 'r')) !== false) :
+
+		while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) :
+			$counter++;
+		endwhile;
+
+		fclose($handle);
+	endif;
+
+	if ($has_header)
+		$counter=$counter-1; // subtract for header row
+
+	return $counter;
+}
 ?>
