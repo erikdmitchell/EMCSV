@@ -13,6 +13,8 @@ emcsv_post_type
 emcsv_post_status (0 - use csv)
 emcsv_map (0 no go)
 
+basically we need to pass the number of rows in the csv file, then our function graps that row, maps and stores the data
+
 <div class="emcsvupload-upload">
 	<h2><?php _e('Upload', 'emcsv'); ?></h2>
 
@@ -28,6 +30,18 @@ emcsv_map (0 no go)
 	</div>
 </div>
 
+<?php
+$options=array(
+	'attachment_id' => $_POST['attachment_id'],
+	'has_header' => $_POST['has_header'],
+	'post_type' => $_POST['emcsv_post_type'],
+	'post_status' => '',
+	'fields_map' => 'cleant post[emcsv_map]',
+	'csv_rows' => 0,
+);
+?>
 
-
-
+<script>
+	// adds the load to the uploads page //
+	$('#emcsv-wp-loader').EMWPLoader(<?php echo $options; ?>);
+</script>
