@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
 	// clear mapping button press //
 	$('#emcsv_clear_mapping').click(function(e) {
 		e.preventDefault();
-console.log('clear form');
+
 		resetForm($('#csv-map-fields-form'));
 	});
 

@@ -6,29 +6,28 @@
  */
 ?>
 
-<div class="ulm-add-to-db">
-	<h2><?php _e('Add to DB','ulm'); ?></h2>
 
-	<div id="add-to-db-loader">
-		<div class="results-insert-into-db">
-			<div class="title"><?php _e('Inserting Results into Database','ulm'); ?></div>
-			<div id="loader-notes"></div>
-			<div id="loader-data"><?php _e('Processing','ulm'); ?> <span class="counter"></span> <?php _e('of'); ?> <span class="total"></span> <?php _e('rows','ulm'); ?></div>
-			<div id="loader-results"></div>
+attachment_id
+has_header
+emcsv_post_type
+emcsv_post_status (0 - use csv)
+emcsv_map (0 no go)
+
+<div class="emcsvupload-upload">
+	<h2><?php _e('Upload', 'emcsv'); ?></h2>
+
+	<div id="emcsv-wp-loader">
+		<div id="jq-loader-wrap">
+			<div id="jq-loader-percent">0%</div>
+			<div class="fill"></div>
 		</div>
+		<div class="jq-counter-details"><span class="current"></span> out of <span class="total"></span> processed.</div>
+		<div class="jq-update-final"></div>
+		<div id="jq-loader-data"></div>
+		<button class="jq-loader-btn button button-primary"><?php _e('Import CSV','emcsv'); ?></button>
 	</div>
 </div>
 
-<script>
-	// add our loader to our add to db field //
-	jQuery('#add-to-db-loader').emJQloader({
-		loaderDiv: jQuery('#add-to-db-loader'),
-		csvArr: <?php echo json_encode($this->csv_file); ?>,
-		extra_data: {
-			'map_id' : <?php echo $this->map_id; ?>,
-			'event_id' : <?php echo $this->event_id; ?>,
-			'fields_to_ignore' : <?php echo json_encode($this->fields_to_ignore); ?>,
-			'code_field' : '<?php echo $this->code_field; ?>',
-		}
-	});
-</script>
+
+
+

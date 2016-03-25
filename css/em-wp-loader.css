@@ -1,0 +1,40 @@
+#jq-loader-wrap {
+	border: 1px solid #000;
+	width: 100%;
+	height: 25px;
+	position: relative;
+	display: none;
+	overflow: hidden;
+}
+.jq-counter-details {
+	display: none;
+}
+#jq-loader-wrap .fill,
+#jq-loader-percent {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#jq-loader-wrap .fill {
+	background-color: #ccc;
+	height: inherit;
+	width: 0;
+}
+#jq-loader-percent {
+	margin-top: 3px;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	color: #000;
+	width: 25px;
+}
+#jq-loader-data {
+	margin: 10px 0;
+	max-height: 750px;
+	overflow: scroll;
+}
+.jq-update-final {
+	padding: 5px 0;
+}

@@ -110,7 +110,7 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 							$html.=$field;
 						$html.='</td>';
 						$html.='<td class="cesv-header">';
-							$html.=emcsv_csv_headers_dropdown('emcsv_headers[]',$attachment_path, ',', false);
+							$html.=emcsv_csv_headers_dropdown('emcsv_map['.$field.']',$attachment_path, ',', false);
 						$html.='</td>';
 					$html.='</tr>';
 				endforeach;
@@ -342,7 +342,7 @@ function emcsv_get_post_types_dropdown($args=array(), $operator='and', $echo=fal
 	$html=null;
 	$post_types=get_post_types($args, 'names', $operator);
 
-	$html.='<select name="emcsv_post_types" id="emcsv_post_types">';
+	$html.='<select name="emcsv_post_type" id="emcsv_post_type">';
 		$html.='<option value="0">-- Select One --</option>';
 		foreach ($post_types as $value => $name) :
 			$html.='<option value="'.$value.'">'.$name.'</option>';

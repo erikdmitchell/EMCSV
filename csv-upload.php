@@ -82,10 +82,10 @@ function emcsv_preset_maps() {
 function emcsv_get_template_slug() {
 	$slug='main'; // default
 
-	if (isset($_POST['emcsvulpoad']) && wp_verify_nonce($_POST['emcsvupload'], 'emcsv_map_fields')) :
-		$slug='upload'; // upload after mapping
+	if (isset($_POST['action']) && $_POST['action']=='map_fields') : //wp_verify_nonce($_POST['emcsvupload'], 'emcsv_map_fields')) :
+		return 'upload'; // upload after mapping
 	elseif (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
-		$slug='mapfields'; // after we add our file
+		return 'mapfields'; // after we add our file
 	endif;
 
 	return $slug;

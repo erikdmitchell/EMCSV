@@ -12,4 +12,7 @@ jQuery(document).ready(function($) {
 		});
 	});
 
+	// adds the load to the uploads page //
+	$('#emcsv-wp-loader').EMWPLoader();
+
 });
