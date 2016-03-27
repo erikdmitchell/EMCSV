@@ -189,9 +189,10 @@ function emcsv_get_wordpress_fields() {
  * @return void
  */
 function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
-    global $wpdb;
+    global $wpdb, $wp_meta_boxes;
 
     $where=array();
+    $meta_box_fields=array();
     $wp_default_prefixes=array(
 		'_wp_',
 		'_menu_',
@@ -225,6 +226,7 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
 		$where=' WHERE '.implode(' AND ', $where);
     endif;
 
+	// this gets all custom fields attached to posts //
 	$sql="
 		SELECT DISTINCT(pm.meta_key)
 		FROM {$wpdb->postmeta} pm
@@ -233,10 +235,41 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
         $where
         ORDER BY meta_key
 	";
+	$custom_fields = $wpdb->get_col($sql);
 
-    $results = $wpdb->get_col($sql);
+	// get fields from registered metaboxes //
+	foreach ($wp_meta_boxes as $meta_box) :
+		$callback_array=emcsv_find_meta_box_callback_fields($meta_box);
 
-    return $results;
+		foreach ($callback_array as $field) :
+			$meta_box_fields[]=$field;
+		endforeach;
+	endforeach;
+
+	// combine sql and registered fields //
+	$custom_fields=array_merge($custom_fields, $meta_box_fields);
+
+	//$custom_fields=asort($custom_fields);
+//print_r($custom_fields);
+    return $custom_fields;
+}
+
+/**
+ * emcsv_find_meta_box_callback_fields function.
+ *
+ * @access public
+ * @param array $meta_box (default: array())
+ * @return void
+ */
+function emcsv_find_meta_box_callback_fields($meta_box=array()) {
+	foreach ($meta_box as $location => $boxes) :
+		foreach ($boxes as $priority => $box) :
+			foreach ($box as $id => $values) :
+				if (isset($values['callback']))
+					return $values['callback'];
+			endforeach;
+		endforeach;
+	endforeach;
 }
 
 /**
