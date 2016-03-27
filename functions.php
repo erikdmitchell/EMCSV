@@ -415,7 +415,7 @@ function emcsv_ajax_add_csv_row_to_db() {
 	$post_data=array();
 	$post_custom_fields=array();
 	$post_taxonomies=array();
-	$return=array();
+	//$return=array();
 	$post_id=0;
 	$row=$_POST['extra_fields']['csv_array'][$_POST['id']]; // get our row
 	$fields_map=$_POST['extra_fields']['fields_map'];
@@ -431,7 +431,6 @@ function emcsv_ajax_add_csv_row_to_db() {
 			$post_status='post';
 		endif;
 	endif;
-
 
 	// our clean row contians a cleaned up array with three types: post, custom_fields, taxonomies //
 	// we must do our post stuff first //
@@ -457,19 +456,24 @@ function emcsv_ajax_add_csv_row_to_db() {
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
-		$return[]='<div class="error">'.__('Failed to add row to database.', 'emcsv').'</div>';
-		//echo json_encode($return);
-		//return;
+		$return=array(
+			'error' => __('Failed to add row to database.', 'emcsv'),
+			'success' => false
+		);
 	elseif (is_wp_error($post_id)) :
-		$return[]=$post_id->get_error_message();
-		//echo json_encode($return);
-		//return;
+		$return=array(
+			'error' => $post_id->get_error_message(),
+			'success' => false
+		);
 	else :
-		$return[]='<div class="updated">'.__('Post (row) added to database. (ID: '.$post_id.')', 'emcsv').'</div>';
+		$return=array(
+			'error' => false,
+			'success' => __('Post (row) added to database. (ID: '.$post_id.')', 'emcsv')
+		);
 	endif;
 
 	do_action('emcsv_after_insert_post', $post_id, $post_data, $clean_row);
-print_r($return);
+
 	echo json_encode($return);
 
 	wp_die();
