@@ -154,6 +154,106 @@ function emcsv_get_fields($raw=false) {
 }
 
 /**
+ * emcsv_get_wordpress_fields function.
+ *
+ * @access public
+ * @return void
+ */
+function emcsv_get_wordpress_fields() {
+	$wp_fields=array(
+		'post_title',
+		'post_content',
+		'post_excerpt',
+		'post_date',
+		'post_name',
+		'post_author',
+		'featured_image',
+		'post_parent',
+		'post_status',
+		'post_format',
+		'menu_order',
+	);
+	// apply_filters
+
+	return $wp_fields;
+}
+
+/**
+ * emcsv_get_meta_keys function.
+ *
+ * @access public
+ * @param bool $show_hidden (default: false)
+ * @param bool $wp_defaults (default: false)
+ * @param bool $type (default: false)
+ * @param bool $status (default: false)
+ * @return void
+ */
+function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
+    global $wpdb;
+
+    $where=array();
+    $wp_default_prefixes=array(
+		'_wp_',
+		'_menu_',
+		'_edit_',
+		'_thumbnail_',
+		'_oembed_',
+	);
+
+    // check if we display "hidden" custom fields (starts with '_') //
+    if (!$show_hidden)
+		$where[]="left(pm.meta_key,1) != '_'";
+
+	// if we hide wp defaults, then we remove a series of basic meta fields that wp uses by default //
+	if (!$wp_defaults) :
+		foreach ($wp_default_prefixes as $prefix) :
+			$where[]="left(pm.meta_key,".strlen($prefix).") != '{$prefix}'";
+		endforeach;
+	endif;
+
+	// show metas from a specific post type //
+    if ($type)
+    	$where[]="p.post_type = '{$type}'";
+
+	// show mets from a specific post sttus //
+    if ($status)
+    	$where[]="p.post_status = '{$status}'";
+
+    if (empty($where)) :
+    	$where='';
+    else :
+		$where=' WHERE '.implode(' AND ', $where);
+    endif;
+
+	$sql="
+		SELECT DISTINCT(pm.meta_key)
+		FROM {$wpdb->postmeta} pm
+        LEFT JOIN {$wpdb->posts} p
+        ON p.ID = pm.post_id
+        $where
+        ORDER BY meta_key
+	";
+
+    $results = $wpdb->get_col($sql);
+
+    return $results;
+}
+
+/**
+ * emcsv_get_all_taxonomies function.
+ *
+ * @access public
+ * @return void
+ */
+function emcsv_get_all_taxonomies() {
+	global $wpdb;
+
+	$taxonomies=get_taxonomies();
+
+	return $taxonomies;
+}
+
+/**
  * emcsv_update_map_template function.
  *
  * @access public

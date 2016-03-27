@@ -167,30 +167,7 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	return $header;
 }
 
-/**
- * emcsv_get_wordpress_fields function.
- *
- * @access public
- * @return void
- */
-function emcsv_get_wordpress_fields() {
-	$wp_fields=array(
-		'post_title',
-		'post_content',
-		'post_excerpt',
-		'post_date',
-		'post_name',
-		'post_author',
-		'featured_image',
-		'post_parent',
-		'post_status',
-		'post_format',
-		'menu_order',
-	);
-	// apply_filters
 
-	return $wp_fields;
-}
 
 /**
  * emcsv_get_custom_fields function.
@@ -198,6 +175,7 @@ function emcsv_get_wordpress_fields() {
  * @access public
  * @return void
  */
+/*
 function emcsv_get_custom_fields() {
 	$default_fields=array(
 		'post_title',
@@ -216,80 +194,7 @@ function emcsv_get_custom_fields() {
 
 	return $wp_fields;
 }
-
-/**
- * emcsv_get_meta_keys function.
- *
- * @access public
- * @param bool $show_hidden (default: false)
- * @param bool $wp_defaults (default: false)
- * @param bool $type (default: false)
- * @param bool $status (default: false)
- * @return void
- */
-function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
-    global $wpdb;
-
-    $where=array();
-    $wp_default_prefixes=array(
-		'_wp_',
-		'_menu_',
-		'_edit_',
-		'_thumbnail_',
-		'_oembed_',
-	);
-
-    // check if we display "hidden" custom fields (starts with '_') //
-    if (!$show_hidden)
-		$where[]="left(pm.meta_key,1) != '_'";
-
-	// if we hide wp defaults, then we remove a series of basic meta fields that wp uses by default //
-	if (!$wp_defaults) :
-		foreach ($wp_default_prefixes as $prefix) :
-			$where[]="left(pm.meta_key,".strlen($prefix).") != '{$prefix}'";
-		endforeach;
-	endif;
-
-	// show metas from a specific post type //
-    if ($type)
-    	$where[]="p.post_type = '{$type}'";
-
-	// show mets from a specific post sttus //
-    if ($status)
-    	$where[]="p.post_status = '{$status}'";
-
-    if (empty($where)) :
-    	$where='';
-    else :
-		$where=' WHERE '.implode(' AND ', $where);
-    endif;
-
-	$sql="
-		SELECT DISTINCT(pm.meta_key)
-		FROM {$wpdb->postmeta} pm
-        LEFT JOIN {$wpdb->posts} p
-        ON p.ID = pm.post_id
-        $where
-	";
-
-    $results = $wpdb->get_col($sql);
-
-    return $results;
-}
-
-/**
- * emcsv_get_all_taxonomies function.
- *
- * @access public
- * @return void
- */
-function emcsv_get_all_taxonomies() {
-	global $wpdb;
-
-	$taxonomies=$wpdb->get_col("SELECT DISTINCT(taxonomy) FROM {$wpdb->term_taxonomy}");
-
-	return $taxonomies;
-}
+*/
 
 /**
  * emcsv_get_post_types_dropdown function.
@@ -447,12 +352,12 @@ function emcsv_ajax_add_csv_row_to_db() {
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
 		$post_taxonomies=$clean_row['taxonomies'];
-
+print_r($clean_row);
 	// add post //
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
-	$post_id=wp_insert_post($post_data); // insert post
+	//$post_id=wp_insert_post($post_data); // insert post
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
