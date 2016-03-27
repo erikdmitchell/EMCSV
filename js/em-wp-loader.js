@@ -91,7 +91,7 @@
 					if ( response !== Object( response ) || ( typeof response.success === "undefined" && typeof response.error === "undefined" ) ) {
 						response = new Object;
 						response.success = false;
-						response.error = 'The request was abnormally terminated. Contact admin or script creator.';
+						response.error = 'This is a generic error response from the EM WP Loader.';
 					}
 
 					if ( response.success ) {

@@ -7,7 +7,8 @@ To Do:
 2. Upload Mapped Data - WORKING ON AJAX FUNCTION
 // we need to determine what type it is to put it into the input
 // post
-// custom
-// taxonomy
+	we are getting a generic error return even though it is working?!
+// custom - test
+// taxonomy - test
 3. Integrate Preset (custom) Map
 4. Upload (custom) Map

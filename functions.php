@@ -408,16 +408,15 @@ function emcsv_upload_clean_fields_map($map=array()) {
 }
 
 function emcsv_ajax_add_csv_row_to_db() {
-	global $emcsv_uploaded_csv_array;
-
-	$return=array();
-	$post=array();
-	$post_id=0;
-
 	// check we have vaild id and array value exists //
 	if ($_POST['id']<0 || !isset($_POST['extra_fields']['csv_array'][$_POST['id']]))
 		return false;
 
+	$post_data=array();
+	$post_custom_fields=array();
+	$post_taxonomies=array();
+	$return=array();
+	$post_id=0;
 	$row=$_POST['extra_fields']['csv_array'][$_POST['id']]; // get our row
 	$fields_map=$_POST['extra_fields']['fields_map'];
 	$post_type=$_POST['extra_fields']['post_type'];
@@ -434,43 +433,48 @@ function emcsv_ajax_add_csv_row_to_db() {
 	endif;
 
 
-	// our post row contians a cleaned up array with three types: post, custom_fields, taxonomies //
-	foreach ($clean_row as $type => $array) :
+	// our clean row contians a cleaned up array with three types: post, custom_fields, taxonomies //
+	// we must do our post stuff first //
+	if (isset($clean_row['post'])) :
+		$post_data=$clean_row['post'];
+	else :
+		return false; // NO POST STUFF NO GO
+	endif;
 
-		switch ($type) :
-			case 'custom_fields':
-				// custom meta
-				break;
-			case 'taxonomies':
-				// add to tax
-				break;
-			case 'post':
-				// add to post
-				$array=emcsv_clean_post_arr($array, $post_type); // clean and sanitize data
-				$array['post_type']=$post_type;
-				$array['post_status']=$post_status;
-				// insert post // $post_id=wp_insert_post($array);;
-				break;
-		endswitch;
-	endforeach;
+	// set custom fields //
+	if (isset($clean_row['custom_fields']))
+		$post_custom_fields=$clean_row['custom_fields'];
 
-	do_action('emcsv_after_insert_row', $post_id, $array)
-/*
-	// process our return //
+	// set taxonomies //
+	if (isset($clean_row['taxonomies']))
+		$post_taxonomies=$clean_row['taxonomies'];
+
+	// add post //
+	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
+	$post_data['post_type']=$post_type;
+	$post_data['post_status']=$post_status;
+	$post_id=wp_insert_post($post_data); // insert post
+
+	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
-		$return[]='<div class="error">'.__('Failed to add row to database.','EM').'</div>';
+		$return[]='<div class="error">'.__('Failed to add row to database.', 'emcsv').'</div>';
+		//echo json_encode($return);
+		//return;
 	elseif (is_wp_error($post_id)) :
 		$return[]=$post_id->get_error_message();
+		//echo json_encode($return);
+		//return;
 	else :
-		$return[]='<div class="updated">'.__('Row added to database. (ID: '.$post_id.')','EM').'</div>';
+		$return[]='<div class="updated">'.__('Post (row) added to database. (ID: '.$post_id.')', 'emcsv').'</div>';
 	endif;
-*/
 
+	do_action('emcsv_after_insert_post', $post_id, $post_data, $clean_row);
+print_r($return);
 	echo json_encode($return);
 
 	wp_die();
 }
-add_action('wp_ajax_em_wp_loader_run', 'emcsv_ajax_add_csv_row_to_db');
+add_action('wp_ajax_emcsv_add_row', 'emcsv_ajax_add_csv_row_to_db');
 
 /**
  * csv_to_array function.

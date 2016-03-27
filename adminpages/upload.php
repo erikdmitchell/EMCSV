@@ -30,6 +30,7 @@ $csv_array=emcsv_csv_to_array(array(
 ));
 $options=array(
 	'ids' => array_keys($csv_array),
+	'ajax_action' => 'emcsv_add_row',
 	'extra_fields' => array(
 		'attachment_id' => $_POST['attachment_id'],
 		'attachment_path' => $attachment_path,
