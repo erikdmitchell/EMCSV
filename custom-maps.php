@@ -136,7 +136,7 @@ function emcsv_get_fields($raw=false) {
 	endif;
 
 	$fields=array(
-		'wp_fields' => array(
+		'post' => array(
 			'name' =>	'WordPress Fields',
 			'fields' => emcsv_get_wordpress_fields(),
 		),
@@ -185,6 +185,12 @@ function emcsv_update_map_template() {
 }
 add_action('admin_init','emcsv_update_map_template');
 
+/**
+ * emcsv_delete_map_template function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_delete_map_template() {
 	if (!isset($_POST['emcsvupload']) || !wp_verify_nonce($_POST['emcsvupload'], 'emcsv_custom_map_delete'))
 		return false;

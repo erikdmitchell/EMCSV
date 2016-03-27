@@ -21,17 +21,24 @@
 </div>
 
 <?php
-global $emcsv_uploaded_csv_array;
-
 // builds options array for js //
+$attachment_path=get_attached_file($_POST['attachment_id']);
+$csv_headers=emcsv_get_csv_header($attachment_path);
+$csv_array=emcsv_csv_to_array(array(
+	'filename' => $attachment_path,
+	'header' => $csv_headers,
+));
 $options=array(
-	'ids' => array_keys($emcsv_uploaded_csv_array),
+	'ids' => array_keys($csv_array),
 	'extra_fields' => array(
 		'attachment_id' => $_POST['attachment_id'],
+		'attachment_path' => $attachment_path,
+		'csv_headers' => $csv_headers,
 		'has_header' => $_POST['has_header'],
 		'post_type' => emcsv_upload_check_post_type($_POST['emcsv_post_type']),
 		'post_status' => emcsv_upload_check_post_status($_POST['emcsv_post_status'],$_POST['attachment_id']),
 		'fields_map' => emcsv_upload_clean_fields_map($_POST['emcsv_map']),
+		'csv_array' => $csv_array,
 	),
 );
 ?>

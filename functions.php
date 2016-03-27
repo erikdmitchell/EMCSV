@@ -1,42 +1,4 @@
 <?php
-/*
-function emcsv_file_input_field() {
-	global $EMCSVUpload;
-
-	echo $EMCSVUpload->upload_file_input();
-}
-*/
-
-/*
-function emcsv_map_csv_header_fields($return=false) {
-	global $EMCSVUpload;
-
-	if ($return)
-		return $EMCSVUpload->map_csv_header_fields();
-
-	echo $EMCSVUpload->map_csv_header_fields();
-}
-*/
-
-/*
-function emcsv_map_file_dropdown($args=array(),$return=false) {
-	global $EMCSVUpload;
-
-	if ($return)
-		return $EMCSVUpload->map_file_dropdown($args);
-
-	echo $EMCSVUpload->map_file_dropdown($args);
-}
-*/
-
-/*
-function emcsv_process_file($attachment_id=0,$map_fields=array(),$post_type='post',$has_header=0) {
-	global $EMCSVUpload;
-
-	$EMCSVUpload->process_csv_file($attachment_id,$map_fields,$post_type,$has_header);
-}
-*/
-
 /**
  * emcsv_get_csv_maps_dropdown function.
  *
@@ -94,7 +56,7 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 	$html.='<table class="form-table emcsv-map-form">';
 		$html.='<tbody>';
 
-			foreach ($wp_fields as $fields_arr) :
+			foreach ($wp_fields as $type => $fields_arr) :
 				$html.='<tr>';
 					$html.='<th>';
 						$html.=__($fields_arr['name'], 'emcsvupload');
@@ -110,7 +72,7 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 							$html.=$field;
 						$html.='</td>';
 						$html.='<td class="cesv-header">';
-							$html.=emcsv_csv_headers_dropdown('emcsv_map['.$field.']',$attachment_path, ',', false);
+							$html.=emcsv_csv_headers_dropdown('emcsv_map['.$type.']['.$field.']',$attachment_path, ',', false);
 						$html.='</td>';
 					$html.='</tr>';
 				endforeach;
@@ -438,55 +400,62 @@ function emcsv_upload_clean_fields_map($map=array()) {
 		return array();
 
 	// removes all elements with value of 0 //
-	return array_filter($map);
+	foreach ($map as $key => $arr) :
+		$map[$key]=array_filter($arr);
+	endforeach;
+
+	return $map;
 }
 
 function emcsv_ajax_add_csv_row_to_db() {
+	global $emcsv_uploaded_csv_array;
+
 	$return=array();
 	$post=array();
-	$row=$_POST['row'];
 	$post_id=0;
 
-/*
-	// trim whitespace from row //
-	foreach ($row as $key => $value) :
-		$row[$key]=trim($value);
-	endforeach;
+	// check we have vaild id and array value exists //
+	if ($_POST['id']<0 || !isset($_POST['extra_fields']['csv_array'][$_POST['id']]))
+		return false;
 
-	// santaize title for security //
-	if (isset($row['post_title']))
-		$post['post_title']=wp_strip_all_tags($row['post_title']);
+	$row=$_POST['extra_fields']['csv_array'][$_POST['id']]; // get our row
+	$fields_map=$_POST['extra_fields']['fields_map'];
+	$post_type=$_POST['extra_fields']['post_type'];
+	$post_status=$_POST['extra_fields']['post_status'];
+	$clean_row=emcsv_map_arrays($row, $fields_map);
 
-	// set post type via our passed variable if not included in $post //
-	if (isset($row['post_type'])) :
-		$post['post_type']=$row['post_type'];
-	elseif ($_POST['post_type']) :
-		$post['post_type']=$_POST['post_type'];
-	else :
-		$post['post_type']='post';
-	endif;
-
-	// set post status tu published if not set //
-	if (!isset($post['post_status']))
-		$post['post_status']='publish';
-
-	// check for and set our post parent //
-	if (isset($row['post_parent']) && $row['post_parent']!='') :
-		$parent=get_page_by_title($row['post_parent'],'OBJECT',$post['post_type']);
-
-		// if we have it, set the id, else set null //
-		if ($parent) :
-			$post['post_parent']=$parent->ID;
+	// if csv, get the post status in csv, if not found, use post
+	if ($post_status=='csv') :
+		if (isset($row['post_status']) && $row['post_status']!='') :
+			$post_status=$row['post_status'];
 		else :
-			$post['post_parent']=null;
+			$post_status='post';
 		endif;
 	endif;
 
-	// insert post //
-	$post_id=wp_insert_post($post,true);
 
-	do_action('emcsv_row_to_db_after_insert_post',$post_id,$post,$row);
+	// our post row contians a cleaned up array with three types: post, custom_fields, taxonomies //
+	foreach ($clean_row as $type => $array) :
 
+		switch ($type) :
+			case 'custom_fields':
+				// custom meta
+				break;
+			case 'taxonomies':
+				// add to tax
+				break;
+			case 'post':
+				// add to post
+				$array=emcsv_clean_post_arr($array, $post_type); // clean and sanitize data
+				$array['post_type']=$post_type;
+				$array['post_status']=$post_status;
+				// insert post // $post_id=wp_insert_post($array);;
+				break;
+		endswitch;
+	endforeach;
+
+	do_action('emcsv_after_insert_row', $post_id, $array)
+/*
 	// process our return //
 	if (!$post_id) :
 		$return[]='<div class="error">'.__('Failed to add row to database.','EM').'</div>';
@@ -501,7 +470,7 @@ function emcsv_ajax_add_csv_row_to_db() {
 
 	wp_die();
 }
-add_action('em_wp_loader_run', 'emcsv_ajax_add_csv_row_to_db');
+add_action('wp_ajax_em_wp_loader_run', 'emcsv_ajax_add_csv_row_to_db');
 
 /**
  * csv_to_array function.
@@ -509,8 +478,6 @@ add_action('em_wp_loader_run', 'emcsv_ajax_add_csv_row_to_db');
  * Based on Jay Williams csv_to_array function. http://gist.github.com/385876
  */
 function emcsv_csv_to_array($args=array()) {
-	global $emcsv_uploaded_csv_array;
-
 	$default_args=array(
 		'filename' => '',
 		'header' => array(),
@@ -548,8 +515,69 @@ function emcsv_csv_to_array($args=array()) {
 		fclose($handle);
 	endif;
 
-	$emcsv_uploaded_csv_array=$data; // populate global
+	return $data;
+}
 
-	return;
+/**
+ * emcsv_map_arrays function.
+ *
+ * @access public
+ * @param array $arr (default: array())
+ * @param array $map (default: array())
+ * @return void
+ */
+function emcsv_map_arrays($arr=array(), $map=array()) {
+	if (empty($arr) || empty($map))
+		return $arr;
+
+	$mapped_arr=array();
+
+	// finad matches and replace the key with the db field name //
+	foreach ($map as $type => $type_arr) :
+		foreach ($type_arr as $key => $value) :
+			if (isset($arr[$value])) :
+				$mapped_arr[$type][$key]=$arr[$value];
+			endif;
+		endforeach;
+	endforeach;
+
+	return $mapped_arr;
+}
+
+/**
+ * emcsv_clean_post_arr function.
+ *
+ * @access public
+ * @param array $arr (default: array())
+ * @return void
+ */
+function emcsv_clean_post_arr($arr=array(), $post_type='post') {
+	if (empty($arr))
+		return $arr;
+
+	foreach ($arr as $key => $value) :
+		// clean our title //
+		if ($key=='post_title') :
+			$arr[$key]=wp_strip_all_tags($value);
+		else :
+			$arr[$key]=sanitize_text_field($value); // sanitize everything else
+		endif;
+	endforeach;
+
+	// check for and set our post parent, if it is numberic we assume it's the id and bail //
+	if (isset($arr['post_parent']) && $arr['post_parent']!='') :
+		if (!is_numeric($arr['post_parent']))
+
+		$parent=get_page_by_title($arr['post_parent'],'OBJECT', $post_type);
+
+		// if we have it, set the id, else set null //
+		if ($parent) :
+			$arr['post_parent']=$parent->ID;
+		else :
+			$arr['post_parent']=null;
+		endif;
+	endif;
+
+	return $arr;
 }
 ?>

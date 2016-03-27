@@ -1,6 +1,7 @@
 (function($) {
 
 	$.fn.EMWPLoader=function(options) {
+
 		var settings=$.extend({
 			ajax_action : 'em_wp_loader_run',
 			ids : {},

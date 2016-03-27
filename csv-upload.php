@@ -15,8 +15,6 @@ Text Domain: emcsv
 // set/define some globals //
 define('EMCSVUPLOAD_PATH', plugin_dir_path(__FILE__));
 
-$emcsv_uploaded_csv_array=array(); // global variable
-
 // require our files //
 require_once(EMCSVUPLOAD_PATH.'functions.php'); // general functions for the plugin
 require_once(EMCSVUPLOAD_PATH.'custom-maps.php'); // custom maps functionality
@@ -84,15 +82,6 @@ function emcsv_get_template_slug() {
 	$slug='main'; // default
 
 	if (isset($_POST['action']) && $_POST['action']=='map_fields') : //wp_verify_nonce($_POST['emcsvupload'], 'emcsv_map_fields')) :
-		$attachment_path=get_attached_file($_POST['attachment_id']);
-		$csv_headers=emcsv_get_csv_header($attachment_path);
-
-		// convert csv to array and populate $emcsv_uploaded_csv_array (global) //
-		emcsv_csv_to_array(array(
-			'filename' => $attachment_path,
-			'header' => $csv_headers
-		));
-
 		return 'upload'; // upload after mapping
 	elseif (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
 		return 'mapfields'; // after we add our file
