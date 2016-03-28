@@ -8,6 +8,9 @@
 <div class="emcsvupload-upload">
 	<h2><?php _e('Upload', 'emcsv'); ?></h2>
 
+	<p>
+		Click the "Import CCSV" button to begin. Only click it ONCE and DO NOT refresh this page until completed.
+	</p>
 	<div id="emcsv-wp-loader">
 		<div id="jq-loader-wrap">
 			<div id="jq-loader-percent">0%</div>
