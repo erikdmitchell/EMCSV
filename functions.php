@@ -167,35 +167,6 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	return $header;
 }
 
-
-
-/**
- * emcsv_get_custom_fields function.
- *
- * @access public
- * @return void
- */
-/*
-function emcsv_get_custom_fields() {
-	$default_fields=array(
-		'post_title',
-		'post_content',
-		'post_excerpt',
-		'post_date',
-		'post_name',
-		'post_author',
-		'featured_image',
-		'post_parent',
-		'post_status',
-		'post_format',
-		'menu_order',
-	);
-	$wp_fields=wp_parse_args($fields,$default_fields);
-
-	return $wp_fields;
-}
-*/
-
 /**
  * emcsv_get_post_types_dropdown function.
  *
@@ -258,9 +229,9 @@ function emcsv_get_post_status_dropdown($echo=false) {
  * @param int $post_type (default: 0)
  * @return void
  */
-function emcsv_upload_check_post_type($post_type=0) {
-	if ($post_type=='' || $post_type==0)
-		$post_type='post';
+function emcsv_upload_check_post_type($post_type='') {
+	if (!$post_type || $post_type=='')
+		return 'post';
 
 	return $post_type;
 }
@@ -350,7 +321,6 @@ function emcsv_ajax_add_csv_row_to_db() {
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
-print_r($post_data);
 	$post_id=wp_insert_post($post_data); // insert post
 
 	// process custom fields and taxonomies //
@@ -533,6 +503,8 @@ function emcsv_add_custom_fields($fields=array(), $post_id=0) {
 function emcsv_add_taxonomies($taxonomies=array(), $post_id=0) {
 	if (empty($taxonomies) || !$post_id)
 		return false;
+
+// I THINK WE NEED TO GET ALL OBJECT IDS IN AN ARRAY, then pass that ($term_id)
 
 	// go through the taxonomies //
 	foreach ($taxonomies as $taxonomy => $value) :
