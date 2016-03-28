@@ -320,7 +320,8 @@ function emcsv_ajax_add_csv_row_to_db() {
 	$post_data=array();
 	$post_custom_fields=array();
 	$post_taxonomies=array();
-	//$return=array();
+	$custom_fields=false;
+	$taxonomies=false;
 	$post_id=0;
 	$row=$_POST['extra_fields']['csv_array'][$_POST['id']]; // get our row
 	$fields_map=$_POST['extra_fields']['fields_map'];
@@ -345,19 +346,23 @@ function emcsv_ajax_add_csv_row_to_db() {
 		return false; // NO POST STUFF NO GO
 	endif;
 
-	// set custom fields //
-	if (isset($clean_row['custom_fields']))
-		$post_custom_fields=$clean_row['custom_fields'];
-
-	// set taxonomies //
-	if (isset($clean_row['taxonomies']))
-		$post_taxonomies=$clean_row['taxonomies'];
-print_r($clean_row);
 	// add post //
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
-	//$post_id=wp_insert_post($post_data); // insert post
+print_r($post_data);
+	$post_id=wp_insert_post($post_data); // insert post
+
+	// process custom fields and taxonomies //
+	if ($post_id && !is_wp_error($post_id)) :
+		// set custom fields //
+		if (isset($clean_row['custom_fields']))
+			emcsv_add_custom_fields($clean_row['custom_fields'], $post_id);
+
+		// set taxonomies //
+		if (isset($clean_row['taxonomies']))
+			emcsv_add_taxonomies($clean_row['taxonomies'], $post_id);
+	endif;
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
@@ -386,9 +391,13 @@ print_r($clean_row);
 add_action('wp_ajax_emcsv_add_row', 'emcsv_ajax_add_csv_row_to_db');
 
 /**
- * csv_to_array function.
+ * emcsv_csv_to_array function.
  *
  * Based on Jay Williams csv_to_array function. http://gist.github.com/385876
+ *
+ * @access public
+ * @param array $args (default: array())
+ * @return void
  */
 function emcsv_csv_to_array($args=array()) {
 	$default_args=array(
@@ -492,5 +501,62 @@ function emcsv_clean_post_arr($arr=array(), $post_type='post') {
 	endif;
 
 	return $arr;
+}
+
+/**
+ * emcsv_add_custom_fields function.
+ *
+ * @access public
+ * @param array $fields (default: array())
+ * @param int $post_id (default: 0)
+ * @return void
+ */
+function emcsv_add_custom_fields($fields=array(), $post_id=0) {
+	if (empty($fields) || !$post_id)
+		return false;
+
+	foreach ($fields as $meta_key => $meta_value) :
+		add_post_meta($post_id, $meta_key, $meta_value);
+	endforeach;
+
+	return true;
+}
+
+/**
+ * emcsv_add_taxonomies function.
+ *
+ * @access public
+ * @param array $taxonomies (default: array())
+ * @param int $post_id (default: 0)
+ * @return void
+ */
+function emcsv_add_taxonomies($taxonomies=array(), $post_id=0) {
+	if (empty($taxonomies) || !$post_id)
+		return false;
+
+	// go through the taxonomies //
+	foreach ($taxonomies as $taxonomy => $value) :
+		$terms=get_terms($taxonomy, array('fields' => 'id=>name'));
+		$values=explode(',', $value); // convert to array since we can have multipl values
+
+		// cycle through existing terms to check for a match //
+		foreach ($values as $name) :
+			$term_id=0;
+
+			// check for term match //
+			foreach ($terms as $id => $term_name) :
+				if ($name==$term_name)
+					$term_id=$id;
+			endforeach;
+
+			// add term if no match //
+			if (!$term_id)
+				wp_insert_term($name, $taxonomy);
+
+			// set our term for our post //
+			wp_set_object_terms($post_id, $term_id, $taxonomy, true);
+		endforeach;
+
+	endforeach;
 }
 ?>
