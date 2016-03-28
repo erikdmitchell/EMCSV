@@ -2,7 +2,7 @@
 /*
 Plugin Name: EMCSV
 Plugin URI:
-Description: Used for help with developing plugin classes and code.
+Description: COming soon.
 Version:     0.1.0
 Author:      Erik Mitchell
 Author URI:  http://erikmitchell.net
