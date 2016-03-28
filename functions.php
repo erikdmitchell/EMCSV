@@ -283,6 +283,12 @@ function emcsv_upload_clean_fields_map($map=array()) {
 	return $map;
 }
 
+/**
+ * emcsv_ajax_add_csv_row_to_db function.
+ *
+ * @access public
+ * @return void
+ */
 function emcsv_ajax_add_csv_row_to_db() {
 	// check we have vaild id and array value exists //
 	if ($_POST['id']<0 || !isset($_POST['extra_fields']['csv_array'][$_POST['id']]))
@@ -504,11 +510,12 @@ function emcsv_add_taxonomies($taxonomies=array(), $post_id=0) {
 	if (empty($taxonomies) || !$post_id)
 		return false;
 
-// I THINK WE NEED TO GET ALL OBJECT IDS IN AN ARRAY, then pass that ($term_id)
-
 	// go through the taxonomies //
 	foreach ($taxonomies as $taxonomy => $value) :
-		$terms=get_terms($taxonomy, array('fields' => 'id=>name'));
+		$terms=get_terms($taxonomy, array(
+			'fields' => 'id=>name',
+			'hide_empty' => false,
+		) );
 		$values=explode(',', $value); // convert to array since we can have multipl values
 
 		// cycle through existing terms to check for a match //
@@ -522,8 +529,15 @@ function emcsv_add_taxonomies($taxonomies=array(), $post_id=0) {
 			endforeach;
 
 			// add term if no match //
-			if (!$term_id)
-				wp_insert_term($name, $taxonomy);
+			if (!$term_id) :
+				$term_details=wp_insert_term($name, $taxonomy);
+
+				if (!is_wp_error($term_details)) :
+					$term_id=$term_details['term_id'];
+				elseif (is_wp_error($term_details) && $term_details->get_error_data('term_exists')!==null) :
+					$term_id=$term_details->get_error_data('term_exists');
+				endif;
+			endif;
 
 			// set our term for our post //
 			wp_set_object_terms($post_id, $term_id, $taxonomy, true);
