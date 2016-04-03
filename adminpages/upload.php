@@ -9,7 +9,7 @@
 	<h2><?php _e('Upload', 'emcsv'); ?></h2>
 
 	<p>
-		Click the "Import CCSV" button to begin. Only click it ONCE and DO NOT refresh this page until completed.
+		<?php _e('Click the "Import CCSV" button to begin. Only click it ONCE and DO NOT refresh this page until completed.', 'emcsv'); ?>
 	</p>
 	<div id="emcsv-wp-loader">
 		<div id="jq-loader-wrap">
@@ -20,11 +20,6 @@
 		<div class="jq-update-final"></div>
 		<div id="jq-loader-data"></div>
 		<button class="jq-loader-btn button button-primary"><?php _e('Import CSV','emcsv'); ?></button>
-	</div>
-
-	<div class="import-description">
-		Click button --- this will happen.
-		Then hide this?
 	</div>
 </div>
 

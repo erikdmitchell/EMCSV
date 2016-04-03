@@ -11,7 +11,7 @@ function emcsv_get_csv_maps_dropdown($echo=false) {
 	$option=get_option('emcsv_map_templates', array());
 
 	if (!$option || empty($option)) :
-		$html.='No preset maps.';
+		$html.=__('No preset maps.', 'emcsv');
 	else :
 		$html.='<select name="preset_map" id="emcsv_preset_map">';
 			$html.='<option value="-1">-- '.__('Select One', 'emcsv').' --</option>';
@@ -126,7 +126,7 @@ function emcsv_csv_headers_dropdown($name='emcsvname', $attachment_path='', $del
 	$headers=emcsv_get_csv_header($attachment_path);
 
 	$html.='<select name='.$name.' class="csv-headers-dropdown">';
-		$html.='<option value="0">-- Select One --</option>';
+		$html.='<option value="0">'.__('-- Select One --', 'emcsv').'</option>';
 		foreach ($headers as $header) :
 			$html.='<option value="'.$header.'">'.$header.'</option>';
 		endforeach;
@@ -173,35 +173,6 @@ function emcsv_get_csv_header($filename='',$delimiter=',') {
 	return $header;
 }
 
-
-
-/**
- * emcsv_get_custom_fields function.
- *
- * @access public
- * @return void
- */
-/*
-function emcsv_get_custom_fields() {
-	$default_fields=array(
-		'post_title',
-		'post_content',
-		'post_excerpt',
-		'post_date',
-		'post_name',
-		'post_author',
-		'featured_image',
-		'post_parent',
-		'post_status',
-		'post_format',
-		'menu_order',
-	);
-	$wp_fields=wp_parse_args($fields,$default_fields);
-
-	return $wp_fields;
-}
-*/
-
 /**
  * emcsv_get_post_types_dropdown function.
  *
@@ -216,7 +187,7 @@ function emcsv_get_post_types_dropdown($args=array(), $operator='and', $echo=fal
 	$post_types=get_post_types($args, 'names', $operator);
 
 	$html.='<select name="emcsv_post_type" id="emcsv_post_type">';
-		$html.='<option value="0">-- Select One --</option>';
+		$html.='<option value="0">'.__('-- Select One --', 'emcsv').'</option>';
 		foreach ($post_types as $value => $name) :
 			$html.='<option value="'.$value.'">'.$name.'</option>';
 		endforeach;
@@ -238,11 +209,11 @@ function emcsv_get_post_types_dropdown($args=array(), $operator='and', $echo=fal
 function emcsv_get_post_status_dropdown($echo=false) {
 	$html=null;
 	$post_statuses=array(
-		'0' => 'Status in CSV',
-		'publish' => 'Publish',
-		'draft' => 'Draft',
-		'pending' => 'Pending',
-		'private' => 'Private',
+		'0' => __('Status in CSV', 'emcsv'),
+		'publish' => __('Publish', 'emcsv'),
+		'draft' => __('Draft', 'emcsv'),
+		'pending' => __('Pending', 'emcsv'),
+		'private' => __('Private', 'emcsv'),
 	);
 
 	$html.='<select name="emcsv_post_status" id="emcsv_post_status">';

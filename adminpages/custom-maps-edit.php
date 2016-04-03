@@ -7,7 +7,7 @@
 ?>
 
 <div class="emcsv-custom-maps update">
-	<h2><?php _e('Update Custom Maps', 'emcsvupload'); ?></h2>
+	<h2><?php _e('Update Custom Maps', 'emcsv'); ?></h2>
 
 	<?php $values=emcsv_get_map_template_values(emcsv_get_map_id()); ?>
 
@@ -17,14 +17,14 @@
 		<?php wp_nonce_field('emcsv_update_map_template', 'emcsvupload'); ?>
 
 		<div class="template_name">
-			<label for="template_name">Template Name</label><input type="text" name="template_name" id="template_name" class="regular-text" value="<?php echo emcsv_map_template_check_value($values, 'template_name'); ?>">
+			<label for="template_name"><?php _e('Template Name', 'emcsv'); ?></label><input type="text" name="template_name" id="template_name" class="regular-text" value="<?php echo emcsv_map_template_check_value($values, 'template_name'); ?>">
 		</div>
 
 		<table class="widefat fixed">
 			<thead>
 				<tr>
-					<th>Fields</th>
-					<th>CSV Header</th>
+					<th><?php _e('Fields', 'emcsv'); ?></th>
+					<th><?php _e('CSV Header', 'emcsv'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -38,7 +38,7 @@
 		</table>
 
 		<p class="submit">
-			<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+			<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Save Changes', 'emcsv'); ?>">
 		</p>
 	</form>
 

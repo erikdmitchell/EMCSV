@@ -2,7 +2,7 @@
 /*
 Plugin Name: EMCSV
 Plugin URI:
-Description: COming soon.
+Description: Coming soon.
 Version:     0.1.0
 Author:      Erik Mitchell
 Author URI:  http://erikmitchell.net
@@ -28,8 +28,8 @@ require_once(EMCSVUPLOAD_PATH.'lib/get-template-part.php'); // a get template pa
  * @return void
  */
 function emcsv_admin_menu() {
-	add_menu_page('CSV Upload', 'CSV Upload', 'manage_options', 'emcsv', 'emcsv_admin_page', 'dashicons-upload');
-	add_submenu_page('emcsv', 'Preset Maps', 'Preset Maps', 'manage_options', 'emcsv-preset-maps', 'emcsv_preset_maps');
+	add_menu_page(__('CSV Upload', 'emcsv'), __('CSV Upload', 'emcsv'), 'manage_options', 'emcsv', 'emcsv_admin_page', 'dashicons-upload');
+	add_submenu_page('emcsv', __('Preset Maps', 'emcsv'), __('Preset Maps', 'emcsv'), 'manage_options', 'emcsv-preset-maps', 'emcsv_preset_maps');
 }
 add_action('admin_menu', 'emcsv_admin_menu');
 
@@ -44,7 +44,7 @@ function emcsv_admin_page() {
 	$slug=emcsv_get_template_slug();
 
 	echo '<div class="wrap">';
-		echo '<h1>CSV Uploader</h1>';
+		echo '<h1>'.__('CSV Uploader', 'emcsv').'</h1>';
 
 		emscvupload_get_template_part($slug);
 	echo '</div>';

@@ -20,7 +20,7 @@ function emcsv_get_csv_maps_table_rows($echo=true) {
 			$html.='<td>'.$id.'</td>';
 			$html.='<td>'.$option['template_name'].'</td>';
 			$html.='<td>';
-				$html.='<a href="'.home_url().esc_url( add_query_arg( array('action' => 'edit', 'id' => $id ) ) ).'">Edit</a> | <a href="'.home_url().esc_url( add_query_arg( array('action' => 'delete', 'id' => $id ) ) ).'">Delete</a>';
+				$html.='<a href="'.home_url().esc_url( add_query_arg( array('action' => 'edit', 'id' => $id ) ) ).'">'.__('Edit', 'emcsv').'</a> | <a href="'.home_url().esc_url( add_query_arg( array('action' => 'delete', 'id' => $id ) ) ).'">'.__('Delete', 'emcsv').'</a>';
 			$html.='</td>';
 		$html.='</tr>';
 	endforeach;
