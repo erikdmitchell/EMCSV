@@ -8,12 +8,17 @@
  */
 function emcsv_get_csv_maps_dropdown($echo=false) {
 	$html=null;
-	$option=get_option('emcsv_csv_maps', array());
+	$option=get_option('emcsv_map_templates', array());
 
 	if (!$option || empty($option)) :
 		$html.='No preset maps.';
 	else :
-
+		$html.='<select name="preset_map">';
+			$html.='<option value="-1">-- '.__('Select One', 'emcsv').' --</option>';
+			foreach ($option as $key => $arr) :
+				$html.='<option value="'.$key.'">'.$arr['template_name'].'</option>';
+			endforeach;
+		$html.'</select>';
 	endif;
 
 	if ($echo)
