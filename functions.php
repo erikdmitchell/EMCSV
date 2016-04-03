@@ -265,7 +265,7 @@ function emcsv_get_post_status_dropdown($echo=false) {
  * @return void
  */
 function emcsv_upload_check_post_type($post_type=0) {
-	if ($post_type=='' || $post_type==0)
+	if ($post_type=='' || !$post_type)
 		$post_type='post';
 
 	return $post_type;
@@ -318,11 +318,11 @@ function emcsv_upload_clean_fields_map($map=array()) {
 	return $map;
 }
 
-function emcsv_ajax_add_csv_row_to_db() {
+function ajax_emcsv_add_csv_row_to_db() {
 	// check we have vaild id and array value exists //
 	if ($_POST['id']<0 || !isset($_POST['extra_fields']['csv_array'][$_POST['id']]))
 		return false;
-
+print_r($_POST);
 	$post_data=array();
 	$post_custom_fields=array();
 	$post_taxonomies=array();
@@ -334,14 +334,18 @@ function emcsv_ajax_add_csv_row_to_db() {
 	$post_status=$_POST['extra_fields']['post_status'];
 	$clean_row=emcsv_map_arrays($row, $fields_map);
 
-	// if csv, get the post status in csv, if not found, use post
+	// if csv, get the post status in csv, if not found, use publish
 	if ($post_status=='csv') :
 		if (isset($row['post_status']) && $row['post_status']!='') :
 			$post_status=$row['post_status'];
 		else :
-			$post_status='post';
+			$post_status='publish';
 		endif;
 	endif;
+
+	// if not post type set, do post //
+	if (!$post_type || $post_type=='')
+		$post_type='post';
 
 	// our clean row contians a cleaned up array with three types: post, custom_fields, taxonomies //
 	// we must do our post stuff first //
@@ -358,11 +362,12 @@ function emcsv_ajax_add_csv_row_to_db() {
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
 		$post_taxonomies=$clean_row['taxonomies'];
-print_r($clean_row);
+
 	// add post //
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
+print_r($post_data);
 	//$post_id=wp_insert_post($post_data); // insert post
 
 	// check our post id, if not id or we havean error, we bail //
@@ -389,7 +394,7 @@ print_r($clean_row);
 
 	wp_die();
 }
-add_action('wp_ajax_emcsv_add_row', 'emcsv_ajax_add_csv_row_to_db');
+add_action('wp_ajax_emcsv_add_row', 'ajax_emcsv_add_csv_row_to_db');
 
 /**
  * csv_to_array function.
@@ -500,6 +505,12 @@ function emcsv_clean_post_arr($arr=array(), $post_type='post') {
 	return $arr;
 }
 
+/**
+ * ajax_emcsv_preset_map_change function.
+ *
+ * @access public
+ * @return void
+ */
 function ajax_emcsv_preset_map_change() {
 	if ($_POST['id']=='' || $_POST['id']<0)
 		return false;
