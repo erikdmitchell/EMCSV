@@ -24,7 +24,10 @@ jQuery(document).ready(function($) {
 				var $dropdown=$csvHeader.find('.csv-headers-dropdown');
 				var $presetSpan=$csvHeader.find('.preset-map-field');
 
-				$dropdown.val(csvField);
+				// make sure value exists in dropdown //
+				if ($dropdown.find('option[value='+csvField+']').length > 0) {
+					$dropdown.val(csvField);
+				}
 
 				$presetSpan.text(csvField);
 			});
