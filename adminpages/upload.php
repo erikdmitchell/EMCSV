@@ -33,7 +33,7 @@ $csv_array=emcsv_csv_to_array(array(
 	'filename' => $attachment_path,
 	'header' => $csv_headers,
 ));
-print_r($_POST);
+
 $options=array(
 	'ids' => array_keys($csv_array),
 	'ajax_action' => 'emcsv_add_row',
@@ -49,7 +49,6 @@ $options=array(
 	),
 );
 ?>
-
 <script>
 	// adds the loader to the uploads page //
 	jQuery('#emcsv-wp-loader').EMWPLoader(<?php echo json_encode($options); ?>);

@@ -280,22 +280,32 @@ function emcsv_upload_check_post_type($post_type=0) {
  * @return void
  */
 function emcsv_upload_check_post_status($post_status='publish', $attachment_id=0) {
-	if ($post_status=='' || $post_status==0) :
+	// if no post status //
+	if ($post_status=='' || !$post_status) :
+		// there's no attachment, so we bail //
 		if ($attachment_id==0) :
 			return 'publish';
 		else :
+			$post_status=false; // reset
 			$attachment_path=get_attached_file($attachment_id);
 			$csv_headers=emcsv_get_csv_header($attachment_path);
 
 			// check our headers to make sure post_status exists //
 			foreach ($csv_headers as $header) :
 				if ($header=='post_status') :
-					return 'csv';
+					$post_status='csv';
 				endif;
 			endforeach;
+
+			// there's nothing in the csv file, so we change it here //
+			if (!$post_status) :
+				return 'publish';
+			else :
+				return $post_status;
+			endif;
 		endif;
 	endif;
-
+echo "<p>$post_status</p>";
 	return $post_status;
 }
 
