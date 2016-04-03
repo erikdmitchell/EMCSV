@@ -305,7 +305,7 @@ function emcsv_upload_check_post_status($post_status='publish', $attachment_id=0
 			endif;
 		endif;
 	endif;
-echo "<p>$post_status</p>";
+
 	return $post_status;
 }
 
@@ -332,11 +332,10 @@ function ajax_emcsv_add_csv_row_to_db() {
 	// check we have vaild id and array value exists //
 	if ($_POST['id']<0 || !isset($_POST['extra_fields']['csv_array'][$_POST['id']]))
 		return false;
-print_r($_POST);
+
 	$post_data=array();
 	$post_custom_fields=array();
 	$post_taxonomies=array();
-	//$return=array();
 	$post_id=0;
 	$row=$_POST['extra_fields']['csv_array'][$_POST['id']]; // get our row
 	$fields_map=$_POST['extra_fields']['fields_map'];
@@ -377,8 +376,7 @@ print_r($_POST);
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
-print_r($post_data);
-	//$post_id=wp_insert_post($post_data); // insert post
+	$post_id=wp_insert_post($post_data); // insert post
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
