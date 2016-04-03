@@ -18,6 +18,8 @@ jQuery(document).ready(function($) {
 		$.post(ajaxurl, data, function (response) {
 			var data=$.parseJSON(response);
 
+			clearPresetSpan();
+
 			// cycle through our fields //
 			$.each(data, function (field, csvField) {
 				var $csvHeader=$('table.emcsv-map-form').find("[data-field='" + field + "']");
@@ -40,4 +42,8 @@ function resetForm($form) {
     $form.find('input:text, input:password, input:file, textarea').val('');
     $form.find('select').val(0);
     $form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+}
+
+function clearPresetSpan() {
+	jQuery('table.emcsv-map-form .csv-header .preset-map-field').text('');
 }
