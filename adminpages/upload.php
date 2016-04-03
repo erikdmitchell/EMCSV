@@ -21,6 +21,11 @@
 		<div id="jq-loader-data"></div>
 		<button class="jq-loader-btn button button-primary"><?php _e('Import CSV','emcsv'); ?></button>
 	</div>
+
+	<div class="import-description">
+		Click button --- this will happen.
+		Then hide this?
+	</div>
 </div>
 
 <?php
@@ -31,6 +36,7 @@ $csv_array=emcsv_csv_to_array(array(
 	'filename' => $attachment_path,
 	'header' => $csv_headers,
 ));
+
 $options=array(
 	'ids' => array_keys($csv_array),
 	'ajax_action' => 'emcsv_add_row',
@@ -46,7 +52,6 @@ $options=array(
 	),
 );
 ?>
-
 <script>
 	// adds the loader to the uploads page //
 	jQuery('#emcsv-wp-loader').EMWPLoader(<?php echo json_encode($options); ?>);
