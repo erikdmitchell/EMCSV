@@ -28,7 +28,7 @@ require_once(EMCSVUPLOAD_PATH.'lib/get-template-part.php'); // a get template pa
  * @return void
  */
 function emcsv_admin_menu() {
-	add_menu_page('CSV Upload', 'CSV Upload', 'manage_options', 'emcsv', 'emcsv_admin_page');
+	add_menu_page('CSV Upload', 'CSV Upload', 'manage_options', 'emcsv', 'emcsv_admin_page', 'dashicons-upload');
 	add_submenu_page('emcsv', 'Preset Maps', 'Preset Maps', 'manage_options', 'emcsv-preset-maps', 'emcsv_preset_maps');
 }
 add_action('admin_menu', 'emcsv_admin_menu');
