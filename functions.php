@@ -13,12 +13,12 @@ function emcsv_get_csv_maps_dropdown($echo=false) {
 	if (!$option || empty($option)) :
 		$html.='No preset maps.';
 	else :
-		$html.='<select name="preset_map">';
+		$html.='<select name="preset_map" id="emcsv_preset_map">';
 			$html.='<option value="-1">-- '.__('Select One', 'emcsv').' --</option>';
 			foreach ($option as $key => $arr) :
 				$html.='<option value="'.$key.'">'.$arr['template_name'].'</option>';
 			endforeach;
-		$html.'</select>';
+		$html.='</select>';
 	endif;
 
 	if ($echo)
@@ -76,8 +76,9 @@ function emcsv_get_csv_map_fields($file=false,$has_header=false) {
 						$html.='<td class="field">';
 							$html.=$field;
 						$html.='</td>';
-						$html.='<td class="cesv-header">';
+						$html.='<td class="csv-header" data-field="'.$field.'">';
 							$html.=emcsv_csv_headers_dropdown('emcsv_map['.$type.']['.$field.']',$attachment_path, ',', false);
+							$html.='<span class="preset-map-field"></span>';
 						$html.='</td>';
 					$html.='</tr>';
 				endforeach;
@@ -498,4 +499,26 @@ function emcsv_clean_post_arr($arr=array(), $post_type='post') {
 
 	return $arr;
 }
+
+function ajax_emcsv_preset_map_change() {
+	if ($_POST['id']=='' || $_POST['id']<0)
+		return false;
+
+	$fields=array();
+	$option=get_option('emcsv_map_templates', array());
+
+	foreach ($option as $key => $arr) :
+		if ($_POST['id']==$key) :
+			$fields=$arr['fields'];
+		endif;
+	endforeach;
+
+	if (empty($fields))
+		return false;
+
+	echo json_encode($fields);
+
+	wp_die();
+}
+add_action('wp_ajax_emcsv_preset_map_change', 'ajax_emcsv_preset_map_change');
 ?>
