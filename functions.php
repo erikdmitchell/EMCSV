@@ -335,7 +335,7 @@ function ajax_emcsv_add_csv_row_to_db() {
 	// set custom fields //
 	if (isset($clean_row['custom_fields']))
 		$post_custom_fields=apply_filters('emcsv_add_row_to_db_custom_fields', $clean_row['custom_fields']);
-print_r($post_custom_fields);
+
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
 		$post_taxonomies=apply_filters('emcsv_add_row_to_db_taxonomies', $clean_row['taxonomies']);
@@ -346,8 +346,19 @@ print_r($post_custom_fields);
 	$post_data['post_status']=$post_status;
 
 	$post_data=apply_filters('emcsv_add_row_to_db_data', $post_data, $clean_row);
-print_r($post_data);
-	//$post_id=wp_insert_post($post_data); // insert post
+
+	$post_id=wp_insert_post($post_data); // insert post
+
+	// process custom fields and taxonomies //
+	if ($post_id && !is_wp_error($post_id)) :
+		// set custom fields //
+		if (!empty($post_custom_fields))
+			emcsv_add_custom_fields($post_custom_fields, $post_id);
+
+		// set taxonomies //
+		if (!empty($post_taxonomies))
+			emcsv_add_taxonomies($post_taxonomies, $post_id);
+	endif;
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
@@ -482,6 +493,73 @@ function emcsv_clean_post_arr($arr=array(), $post_type='post') {
 	endif;
 
 	return $arr;
+}
+
+/**
+ * emcsv_add_custom_fields function.
+ *
+ * @access public
+ * @param array $fields (default: array())
+ * @param int $post_id (default: 0)
+ * @return void
+ */
+function emcsv_add_custom_fields($fields=array(), $post_id=0) {
+	if (empty($fields) || !$post_id)
+		return false;
+
+	foreach ($fields as $meta_key => $meta_value) :
+		add_post_meta($post_id, $meta_key, $meta_value);
+	endforeach;
+
+	return true;
+}
+
+/**
+ * emcsv_add_taxonomies function.
+ *
+ * @access public
+ * @param array $taxonomies (default: array())
+ * @param int $post_id (default: 0)
+ * @return void
+ */
+function emcsv_add_taxonomies($taxonomies=array(), $post_id=0) {
+	if (empty($taxonomies) || !$post_id)
+		return false;
+
+	// go through the taxonomies //
+	foreach ($taxonomies as $taxonomy => $value) :
+		$terms=get_terms($taxonomy, array(
+			'fields' => 'id=>name',
+			'hide_empty' => false,
+		) );
+		$values=explode(',', $value); // convert to array since we can have multipl values
+
+		// cycle through existing terms to check for a match //
+		foreach ($values as $name) :
+			$term_id=0;
+
+			// check for term match //
+			foreach ($terms as $id => $term_name) :
+				if ($name==$term_name)
+					$term_id=$id;
+			endforeach;
+
+			// add term if no match //
+			if (!$term_id) :
+				$term_details=wp_insert_term($name, $taxonomy);
+
+				if (!is_wp_error($term_details)) :
+					$term_id=$term_details['term_id'];
+				elseif (is_wp_error($term_details) && $term_details->get_error_data('term_exists')!==null) :
+					$term_id=$term_details->get_error_data('term_exists');
+				endif;
+			endif;
+
+			// set our term for our post //
+			wp_set_object_terms($post_id, $term_id, $taxonomy, true);
+		endforeach;
+
+	endforeach;
 }
 
 /**
