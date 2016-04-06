@@ -3,7 +3,7 @@
 Plugin Name: EMCSV
 Plugin URI:
 Description: Coming soon.
-Version:     0.1.0
+Version:     0.1.1
 Author:      Erik Mitchell
 Author URI:  http://erikmitchell.net
 License:     GPL2
