@@ -329,24 +329,24 @@ function ajax_emcsv_add_csv_row_to_db() {
 
 	// our clean row contians a cleaned up array with three types: post, custom_fields, taxonomies //
 	// we must do our post stuff first //
-	if (isset($clean_row['post'])) :
+	if (isset($clean_row['post']))
 		$post_data=$clean_row['post'];
-	else :
-		return false; // NO POST STUFF NO GO
-	endif;
 
 	// set custom fields //
 	if (isset($clean_row['custom_fields']))
-		$post_custom_fields=$clean_row['custom_fields'];
-
+		$post_custom_fields=apply_filters('emcsv_add_row_to_db_custom_fields', $clean_row['custom_fields']);
+//print_r($post_custom_fields);
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
-		$post_taxonomies=$clean_row['taxonomies'];
+		$post_taxonomies=apply_filters('emcsv_add_row_to_db_taxonomies', $clean_row['taxonomies']);
 
 	// add post //
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
+
+	$post_data=apply_filters('emcsv_add_row_to_db_data', $post_data, $clean_row);
+//print_r($post_data);
 	$post_id=wp_insert_post($post_data); // insert post
 
 	// check our post id, if not id or we havean error, we bail //

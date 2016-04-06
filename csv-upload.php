@@ -20,6 +20,21 @@ require_once(EMCSVUPLOAD_PATH.'functions.php'); // general functions for the plu
 require_once(EMCSVUPLOAD_PATH.'custom-maps.php'); // custom maps functionality
 require_once(EMCSVUPLOAD_PATH.'lib/get-template-part.php'); // a get template part function
 
+$emcsv_active=true;
+
+/**
+ * is_emcsv_active function.
+ *
+ * @access public
+ * @return void
+ */
+function is_emcsv_active() {
+	global $emcsv_active;
+
+	$emcsv_active=true;
+
+	return true;
+}
 
 /**
  * emcsv_admin_menu function.
@@ -83,7 +98,7 @@ function emcsv_get_template_slug() {
 
 	if (isset($_POST['action']) && $_POST['action']=='map_fields') : //wp_verify_nonce($_POST['emcsvupload'], 'emcsv_map_fields')) :
 		return 'upload'; // upload after mapping
-	elseif (isset($_GET['emcsvupload']) && wp_verify_nonce($_GET['emcsvupload'], 'emcsv_add_file')) :
+	elseif (isset($_GET['emcsv']) && wp_verify_nonce($_GET['emcsv'], 'emcsv_add_file')) :
 		return 'mapfields'; // after we add our file
 	endif;
 

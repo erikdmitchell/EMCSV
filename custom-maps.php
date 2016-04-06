@@ -173,7 +173,8 @@ function emcsv_get_wordpress_fields() {
 		'post_format',
 		'menu_order',
 	);
-	// apply_filters
+
+	$wp_fields=apply_filters('emcsv_get_wordpress_fields', $wp_fields);
 
 	return $wp_fields;
 }
@@ -189,11 +190,11 @@ function emcsv_get_wordpress_fields() {
  * @return void
  */
 function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false, $status=false) {
-    global $wpdb, $wp_meta_boxes;
+  global $wpdb, $wp_meta_boxes;
 
-    $where=array();
-    $meta_box_fields=array();
-    $wp_default_prefixes=array(
+  $where=array();
+  $meta_box_fields=array();
+  $wp_default_prefixes=array(
 		'_wp_',
 		'_menu_',
 		'_edit_',
@@ -201,8 +202,8 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
 		'_oembed_',
 	);
 
-    // check if we display "hidden" custom fields (starts with '_') //
-    if (!$show_hidden)
+   // check if we display "hidden" custom fields (starts with '_') //
+   if (!$show_hidden)
 		$where[]="left(pm.meta_key,1) != '_'";
 
 	// if we hide wp defaults, then we remove a series of basic meta fields that wp uses by default //
@@ -213,18 +214,18 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
 	endif;
 
 	// show metas from a specific post type //
-    if ($type)
-    	$where[]="p.post_type = '{$type}'";
+	  if ($type)
+		 	$where[]="p.post_type = '{$type}'";
 
 	// show mets from a specific post sttus //
-    if ($status)
-    	$where[]="p.post_status = '{$status}'";
+  if ($status)
+   	$where[]="p.post_status = '{$status}'";
 
-    if (empty($where)) :
-    	$where='';
-    else :
+  if (empty($where)) :
+   	$where='';
+  else :
 		$where=' WHERE '.implode(' AND ', $where);
-    endif;
+  endif;
 
 	// this gets all custom fields attached to posts //
 	$sql="
@@ -235,23 +236,25 @@ function emcsv_get_meta_keys($show_hidden=false, $wp_defaults=false, $type=false
         $where
         ORDER BY meta_key
 	";
-	$custom_fields = $wpdb->get_col($sql);
+	$custom_fields=apply_filters('emcsv_get_meta_keys_custom_fields', $wpdb->get_col($sql), $sql);
 
 	// get fields from registered metaboxes //
-	foreach ($wp_meta_boxes as $meta_box) :
-		$callback_array=emcsv_find_meta_box_callback_fields($meta_box);
+	if (!empty($wp_meta_boxes)) :
+		foreach ($wp_meta_boxes as $meta_box) :
+			$callback_array=emcsv_find_meta_box_callback_fields($meta_box);
 
-		foreach ($callback_array as $field) :
-			$meta_box_fields[]=$field;
+			foreach ($callback_array as $field) :
+				$meta_box_fields[]=$field;
+			endforeach;
 		endforeach;
-	endforeach;
+	endif;
+
+	$meta_box_fields=apply_filters('emcsv_get_meta_keys_meta_box_fields', $meta_box_fields, $wp_meta_boxes);
 
 	// combine sql and registered fields //
 	$custom_fields=array_merge($custom_fields, $meta_box_fields);
 
-	//$custom_fields=asort($custom_fields);
-//print_r($custom_fields);
-    return $custom_fields;
+  return $custom_fields;
 }
 
 /**
