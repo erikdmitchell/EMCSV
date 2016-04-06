@@ -335,7 +335,7 @@ function ajax_emcsv_add_csv_row_to_db() {
 	// set custom fields //
 	if (isset($clean_row['custom_fields']))
 		$post_custom_fields=apply_filters('emcsv_add_row_to_db_custom_fields', $clean_row['custom_fields']);
-//print_r($post_custom_fields);
+print_r($post_custom_fields);
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
 		$post_taxonomies=apply_filters('emcsv_add_row_to_db_taxonomies', $clean_row['taxonomies']);
@@ -346,8 +346,8 @@ function ajax_emcsv_add_csv_row_to_db() {
 	$post_data['post_status']=$post_status;
 
 	$post_data=apply_filters('emcsv_add_row_to_db_data', $post_data, $clean_row);
-//print_r($post_data);
-	$post_id=wp_insert_post($post_data); // insert post
+print_r($post_data);
+	//$post_id=wp_insert_post($post_data); // insert post
 
 	// check our post id, if not id or we havean error, we bail //
 	if (!$post_id) :
