@@ -334,20 +334,24 @@ function ajax_emcsv_add_csv_row_to_db() {
 
 	// set custom fields //
 	if (isset($clean_row['custom_fields']))
-		$post_custom_fields=apply_filters('emcsv_add_row_to_db_custom_fields', $clean_row['custom_fields']);
+		$post_custom_fields=apply_filters("emcsv_add_row_to_db_custom_fields_{$post_type}", $clean_row['custom_fields']);
 
 	// set taxonomies //
 	if (isset($clean_row['taxonomies']))
-		$post_taxonomies=apply_filters('emcsv_add_row_to_db_taxonomies', $clean_row['taxonomies']);
+		$post_taxonomies=apply_filters("emcsv_add_row_to_db_taxonomies_{$post_type}", $clean_row['taxonomies']);
 
 	// add post //
 	$post_data=emcsv_clean_post_arr($post_data, $post_type); // clean and sanitize data
 	$post_data['post_type']=$post_type;
 	$post_data['post_status']=$post_status;
 
-	$post_data=apply_filters('emcsv_add_row_to_db_data', $post_data, $clean_row);
+	$post_data=apply_filters("emcsv_add_row_to_db_data_{$post_type}", $post_data, $clean_row);
 
+	$post_data=emcsv_post_check_title_content($post_data);
+//print_r($post_data);
 	$post_id=wp_insert_post($post_data); // insert post
+
+	//emcsv_post_title_check($post_id, $post_data); // "forces" our title
 
 	// process custom fields and taxonomies //
 	if ($post_id && !is_wp_error($post_id)) :
@@ -378,7 +382,7 @@ function ajax_emcsv_add_csv_row_to_db() {
 		);
 	endif;
 
-	do_action('emcsv_after_insert_post', $post_id, $post_data, $clean_row);
+	do_action("emcsv_after_insert_post_{$post_type}", $post_id, $post_data, $clean_row);
 
 	echo json_encode($return);
 
@@ -589,4 +593,36 @@ function ajax_emcsv_preset_map_change() {
 	wp_die();
 }
 add_action('wp_ajax_emcsv_preset_map_change', 'ajax_emcsv_preset_map_change');
+
+/**
+ * emcsv_post_title_check function.
+ *
+ * for some reason, we cannot update the post title, so this forces it
+ *
+ * @access public
+ * @param int $post_id (default: 0)
+ * @param array $post_data (default: array())
+ * @return void
+ */
+function emcsv_post_title_check($post_id=0, $post_data=array()) {
+	global $wpdb;
+
+	$post=get_post($post_id);
+
+	if (isset($post_data['post_title']) && $post->post_title=='') :
+		$wpdb->update($wpdb->posts, array('post_title' => $post_data['post_title']), array('ID' => $post_id));
+	endif;
+
+	return;
+}
+
+function emcsv_post_check_title_content($post_data=array()) {
+	if (!isset($post_data['post_title']))
+		$post_data['post_title']=' ';
+
+	if (!isset($post_data['post_content']))
+		$post_data['post_content']=' ';
+
+	return $post_data;
+}
 ?>
