@@ -171,7 +171,6 @@ function emcsv_github_update_check() {
         'requires' => '3.8', // which version of WordPress does your plugin require?
         'tested' => '4.4.2', // which version of WordPress is your plugin tested up to?
         'readme' => 'readme.txt', // which file to use as the readme for the version number
-        'access_token' => '', // Access private repositories by authorizing under Appearance > Github Updates when this example plugin is installed
     );
     new WP_GitHub_Updater($config);
 }
