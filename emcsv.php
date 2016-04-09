@@ -155,6 +155,8 @@ function emcsv_github_update_check() {
 	if (!is_admin())
 		return false; // note the use of is_admin() to double check that this is happening in the admin
 
+	define( 'WP_GITHUB_FORCE_UPDATE', true );
+
 	$username='erikdmitchell';
 	$repo_name='emcsv';
 	$folder_name='emcsv';
@@ -169,7 +171,7 @@ function emcsv_github_update_check() {
         'requires' => '3.8', // which version of WordPress does your plugin require?
         'tested' => '4.4.2', // which version of WordPress is your plugin tested up to?
         'readme' => 'readme.txt', // which file to use as the readme for the version number
-        //'access_token' => '', // Access private repositories by authorizing under Appearance > Github Updates when this example plugin is installed
+        'access_token' => '', // Access private repositories by authorizing under Appearance > Github Updates when this example plugin is installed
     );
     new WP_GitHub_Updater($config);
 }
