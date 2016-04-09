@@ -1,9 +1,11 @@
 === EMCSV ===
 
+== Description ==
+
 A CSV uploader class for WordPress. Designed to be used in plugins.
 However, it does run on its own for now.
 
-Need to test when a csv doesn't have a header
+* Need to test when a csv doesn't have a header
 
 == Hooks and Filters ==
 
