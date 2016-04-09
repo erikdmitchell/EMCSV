@@ -3,7 +3,7 @@
 Plugin Name: EMCSV
 Plugin URI:
 Description: A powerful yet simple CSV file uploader.
-Version:     0.1.1
+Version:     0.1.2
 Author:      Erik Mitchell
 Author URI:  http://erikmitchell.net
 License:     GPL2
