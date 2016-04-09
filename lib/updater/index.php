@@ -1,0 +1,1 @@
+<?php // ye shall not pass
