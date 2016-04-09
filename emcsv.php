@@ -22,6 +22,7 @@ require_once(EMCSV_PATH.'lib/get-template-part.php'); // a get template part fun
 require_once(EMCSV_PATH.'lib/updater/updater.php'); // our github updater class
 
 $emcsv_active=true;
+$emcsv_version='0.1.1';
 
 /**
  * is_emcsv_active function.
@@ -35,6 +36,18 @@ function is_emcsv_active() {
 	$emcsv_active=true;
 
 	return true;
+}
+
+/**
+ * emsv_version function.
+ *
+ * @access public
+ * @return void
+ */
+function emsv_version() {
+	global $emcsv_version;
+
+	echo $emcsv_version;
 }
 
 /**
@@ -139,22 +152,26 @@ add_action('admin_enqueue_scripts','emcsv_admin_scripts_styles');
  * @return void
  */
 function emcsv_github_update_check() {
-	if (is_admin()) : // note the use of is_admin() to double check that this is happening in the admin
-	    $config = array(
-	        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-	        'proper_folder_name' => 'emcsv', // this is the name of the folder your plugin lives in
-	        'api_url' => 'https://api.github.com/repos/username/repository-name', // the github API url of your github repo
-	        'raw_url' => 'https://raw.github.com/username/repository-name/master', // the github raw url of your github repo
-	        'github_url' => 'https://github.com/username/repository-name', // the github url of your github repo
-	        'zip_url' => 'https://github.com/username/repository-name/zipball/master', // the zip url of the github repo
-	        'sslverify' => true // wether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-	        'requires' => '3.0', // which version of WordPress does your plugin require?
-	        'tested' => '3.3', // which version of WordPress is your plugin tested up to?
-	        'readme' => 'README.md', // which file to use as the readme for the version number
-	        'access_token' => '', // Access private repositories by authorizing under Appearance > Github Updates when this example plugin is installed
-	    );
-	    new WP_GitHub_Updater($config);
-	endif;
+	if (!is_admin())
+		return false; // note the use of is_admin() to double check that this is happening in the admin
+
+	$username='erikdmitchell';
+	$repo_name='emcsv';
+	$folder_name='emcsv';
+    $config = array(
+        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+        'proper_folder_name' => $folder_name, // this is the name of the folder your plugin lives in
+        'api_url' => 'https://api.github.com/repos/'.$username.'/'.$repo_name, // the github API url of your github repo
+        'raw_url' => 'https://raw.github.com/'.$username.'/'.$repo_name.'/master', // the github raw url of your github repo
+        'github_url' => 'https://github.com/'.$username.'/'.$repo_name, // the github url of your github repo
+        'zip_url' => 'https://github.com/'.$username.'/'.$repo_name.'/zipball/master', // the zip url of the github repo
+        'sslverify' => true // wether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
+        'requires' => '3.8', // which version of WordPress does your plugin require?
+        'tested' => '4.4.2', // which version of WordPress is your plugin tested up to?
+        'readme' => 'readme.txt', // which file to use as the readme for the version number
+        //'access_token' => '', // Access private repositories by authorizing under Appearance > Github Updates when this example plugin is installed
+    );
+    new WP_GitHub_Updater($config);
 }
 add_action('admin_init', 'emcsv_github_update_check');
 ?>
